@@ -1,9 +1,21 @@
+@import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
+
 #content {
   margin-left: auto;
   margin-right: auto;
   width: 650px;
+  font-family: Lato, sans-serif;
 }
 
 #greeting-container {
   margin-top: 20px;
+}
+
+#me img {
+  width: 650px;
+  display: none;
+}
+
+#me .visible {
+  display: block;
 }

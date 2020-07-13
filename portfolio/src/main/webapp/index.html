@@ -2,17 +2,31 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>My Portfolio</title>
+    <title>Paul's Portfolio</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
   <body>
     <div id="content">
-      <h1>My Portfolio</h1>
-      <p>This is my portfolio.</p>
-      <p>Click here to get a random message:</p>
-      <button onclick="addRandomGreeting()">Hello</button>
-      <div id="greeting-container"></div>
+      <h1>Paul's Portfolio</h1>
+      <h3>Who I am</h3>
+      <div id="me">
+        <p>TODO: fill in</p>
+        <img src="images/1.jpg" class="visible" id="1">
+        <img src="images/2.jpg" id="2">
+        <img src="images/3.jpg" id="3">
+        <img src="images/4.jpg" id="4">
+        <img src="images/5.jpg" id="5">
+        <img src="images/6.jpg" id="6">
+        <img src="images/7.jpg" id="7">
+        <img src="images/8.jpg" id="8">
+        <button onclick="updateDisplayedImage(currentImageId() - 1)" disabled id="btn_prev">Back</button>
+        <button onclick="updateDisplayedImage(currentImageId() + 1)" id="btn_next">Next</button>
+      </div>
+      <h3>Projects I worked on</h3>
+      <p>TODO: fill in</p>
+      <h3>Me on social networks</h3>
+      <p>TODO: fill in</p>
     </div>
   </body>
 </html>
