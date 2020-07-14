@@ -12,8 +12,9 @@
 }
 
 #me img {
+  height: 360px;
   display: none;
-  width: 650px;
+  width: auto;
 }
 
 #me .visible {
