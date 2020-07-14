@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
+@import url(https://fonts.googleapis.com/css?family=Lato&display=swap);
 
 #content {
+  font-family: 'Lato', sans-serif;
   margin-left: auto;
   margin-right: auto;
   width: 650px;
-  font-family: Lato, sans-serif;
 }
 
 #greeting-container {
@@ -12,8 +12,8 @@
 }
 
 #me img {
-  width: 650px;
   display: none;
+  width: 650px;
 }
 
 #me .visible {

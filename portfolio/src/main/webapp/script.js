@@ -36,11 +36,10 @@ function currentImageId() {
   return Number(visibleImg.id);
 }
 
-
 // disables or enables navigation buttons based on the currently displayed image
 function updateButtonsState(visibleImgId) {
-  const prevButton = document.getElementById('btn_prev');
-  const nextButton = document.getElementById('btn_next');
+  const prevButton = document.getElementById('btn-prev');
+  const nextButton = document.getElementById('btn-next');
   if (visibleImgId === 1) {
     // disable "Prev" button if there are no images left before current
     prevButton.disabled = true;
