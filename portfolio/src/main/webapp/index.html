@@ -9,7 +9,14 @@
   <body>
     <div id="content">
       <h1>Paul's Portfolio</h1>
-      <button class="toggle-theme-btn" onclick="toggleTheme()">Toggle mode</button>
+      <!-- <button class="toggle-theme-btn" onclick="toggleTheme()">Toggle mode</button> -->
+      <div class="switch-container">
+        <p>Dark mode</p>
+        <label class="switch">
+          <input type="checkbox" id="theme-toggler" onchange="toggleTheme()">
+          <span class="slider"></span>
+        </label>
+      </div>
       <h3>Who I am</h3>
       <div>
         <h4>Hi! My name is Paul, I am from Kharkiv, Ukraine. Currently I am a STEP Intern at 
@@ -37,7 +44,7 @@
         <p>I started coding when I was studying in the school and immediately loved it. Since then I took part in many contest and tournaments in competitive programming,
           sometimes even won prizes :) so I definitely knew who I want to become. Now I am a second-year student at V.N. Karazin Kharkiv National University on faculty of math.
           <div class="image-with-label">
-            <img src="images/karazin-main-campus.jpg" class="inline-image" alt="Image">
+            <img src="images/karazin-main-campus.jpg" alt="Image">
             <p>My uni</p>
           </div>
           My main subjects of study are computer science, math, and algorithms. After the first year at uni, I started working at local outsourcing IT company here in Kharkiv,

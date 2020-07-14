@@ -9,6 +9,9 @@ button {
 
 img {
   border-radius: 5px;
+  height: 360px;
+  margin: auto;
+  width: auto;
 }
 
 #content {
@@ -25,9 +28,6 @@ img {
 
 #image-viewer img {
   display: none;
-  height: 360px;
-  margin: auto;
-  width: auto;
 }
 
 #image-viewer .visible {
@@ -48,12 +48,6 @@ img {
   align-items: center;
 }
 
-.inline-image {
-  height: 360px;
-  width: auto;
-  margin: auto
-}
-
 .light-theme {
   background-color: white;
   color: black;
@@ -70,14 +64,70 @@ img {
   color: aqua;
 }
 
-.toggle-theme-btn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
-
 .up-btn {
   position: absolute;
   right: 20px;
   margin-bottom: 20px;
+}
+
+/* slider styles */
+
+.switch-container {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  width: 150px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  height: 34px;
+  width: 60px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .5s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .5s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
 }
