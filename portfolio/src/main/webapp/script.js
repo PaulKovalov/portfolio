@@ -55,3 +55,16 @@ function updateButtonsState(visibleImgId) {
     nextButton.disabled = false;
   }
 }
+
+function toggleTheme() {
+  var body = document.getElementsByTagName('body')[0];
+  if (body.classList.contains('dark-theme')) {
+    body.classList.remove('dark-theme');
+    body.classList.add('light-theme');
+  } else {
+    body.classList.remove('light-theme');
+    body.classList.add('dark-theme');
+  }
+}
+
+function scrollUp() { window.scrollTo({top : 0, behavior : "smooth"}); }
