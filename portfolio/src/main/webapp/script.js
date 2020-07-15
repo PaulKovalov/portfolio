@@ -32,8 +32,7 @@ function updateDisplayedImage(imageId) {
 
 // returns the id of the currently displayed image
 function currentImageId() {
-  const visibleImg = document.getElementsByClassName('visible')[0]; // get currently displayed image
-  return Number(visibleImg.id);
+  return document.getElementsByClassName('visible')[0].id; // get currently displayed image
 }
 
 // disables or enables navigation buttons based on the currently displayed image
