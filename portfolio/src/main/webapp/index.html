@@ -10,23 +10,60 @@
     <div id="content">
       <h1>Paul's Portfolio</h1>
       <h3>Who I am</h3>
-      <div id="me">
-        <p>TODO: fill in</p>
-        <img src="images/1.jpg" class="visible" id="1" alt="Image">
-        <img src="images/2.jpg" id="2" alt="Image">
-        <img src="images/3.jpg" id="3" alt="Image">
-        <img src="images/4.jpg" id="4" alt="Image">
-        <img src="images/5.jpg" id="5" alt="Image">
-        <img src="images/6.jpg" id="6" alt="Image">
-        <img src="images/7.jpg" id="7" alt="Image">
-        <img src="images/8.jpg" id="8" alt="Image">
-        <button onclick="updateDisplayedImage(Number(currentImageId()) - 1)" disabled id="btn-prev">Back</button>
-        <button onclick="updateDisplayedImage(Number(currentImageId()) + 1)" id="btn-next">Next</button>
+      <div>
+        <h4>Hi! My name is Paul, I am from Kharkiv, Ukraine. Currently I am a STEP Intern at 
+          <span style="color:rgb(66,133,244)">G</span> 
+          <span style="color:rgb(219,68,55)">o</span>
+          <span style="color:rgb(244,160,0)">o</span>
+          <span style="color:rgb(66,133,244)">g</span>
+          <span style="color:rgb(15,157,88)">l</span>
+          <span style="color:rgb(219,68,55)">e</span>
+          working in the great team of SREs</h4>
       </div>
-      <h3>Projects I worked on</h3>
-      <p>TODO: fill in</p>
+      <h3>My projects</h3>
+      <p>The most impactful personal project I did is the Telegram bot for high school students that helps students to prepare for their final exams.
+        Bot sends tasks to a user, which they solve and bot immediately checks if the answer is correct.
+        It has a rich task database gathered from the previous exams, so the level of difficulty and the relevance is the best possible. I'm proud that it is used by
+        students here in Ukraine, and despite a tough competition it still has well over 600 active users. 
+        The bot is written in Java, uses MySQL as a database and deployed to RaspberryPi in my room :) The link to the bot is @Zno_helper_bot (the interface is in Ukrainian)
+      </p>
+      <p>
+        During my study at school I liked doing 2D games, I used SFML and C++ for developing. The one I like the most is tetris, you can find on my Github
+        <a href="https://github.com/PaulKovalov/tetrisv2.0" target="_blank">here</a>. I also have a few unfinished games such as Agario, Pentago, and drag racing simulator.
+      </p>
+      <h3>My life</h3>
+      <div>
+        <p>I started coding when I was studying in the school and immediately loved it. Since then I took part in many contest and tournaments in competitive programming,
+          sometimes even got prizes :) so I definitely knew who I want to become. Now I am a second-year student at V.N. Karazin Kharkiv National University on faculty of math.
+          <div class="image-with-label">
+            <img src="images/karazin-main-campus.jpg" class="inline-image" alt="V. N. Karazin National University in Kharkiv">
+            <p>My uni</p>
+          </div>
+          My main subjects of study are computer science, math, and algorithms. After the first year at uni, I started working at local outsourcing IT company here in Kharkiv,
+          as a part-time web developer, doing mostly backend tasks in Python3. This was my first experience doing commercial coding!
+          Apart from programming, I like playing chess, table tennis, and cycling. Cycling is my greatest hobby, I love riding on big distances breaking my distance records, as well 
+          as discovering the beautiful sceneries of my motherland. My longest ride so far is 106km, though I'm going to beat it soon with at least 150km in one ride! Below are a few photos
+          taken from my trips. Sometimes we get into mud or use broken bridges with holes to cross the rivers but overall I find cycling is a fantastic experience!
+        </p>
+        <div id="image-viewer">
+          <img src="images/1.jpg" class="visible" id="1" alt="Crossing a river on a bike">
+          <img src="images/2.jpg" id="2" alt="Me and bike in mud">
+          <img src="images/3.jpg" id="3" alt="Another river crossing">
+          <img src="images/4.jpg" id="4" alt="Admiring the landscape">
+          <img src="images/5.jpg" id="5" alt="Bikes near the lake">
+          <img src="images/6.jpg" id="6" alt="Biggest lake in Kharkiv region">
+          <img src="images/7.jpg" id="7" alt="Fantastic scenery of Kharkiv region">
+          <img src="images/8.jpg" id="8" alt="Another cool view">
+          <div class="buttons-block">
+            <button onclick="updateDisplayedImage(Number(currentImageId()) - 1)" disabled id="btn-prev">&#10094;</button>
+            <button onclick="updateDisplayedImage(Number(currentImageId()) + 1)" id="btn-next">&#10095;</button>
+          </div>
+        </div>
+      </div>
       <h3>Me on social networks</h3>
-      <p>TODO: fill in</p>
+      <p><a href="https://www.linkedin.com/in/paul-kovalov/" target="_blank">Linkedin</a></p>
+      <p>Here you can check my rides: <a href="https://www.strava.com/athletes/19512872" target="_blank">Strava</a></p>
+      <p><a href="https://www.facebook.com/pavlo.kovalov.1/"  target="_blank">FB</a></p>
     </div>
   </body>
 </html>
