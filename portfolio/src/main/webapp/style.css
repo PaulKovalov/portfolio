@@ -7,6 +7,11 @@ button {
   padding: 6px;
 }
 
+button:hover {
+  background-color: #99ccff;
+  cursor: pointer;
+}
+
 img {
   border-radius: 5px;
   height: 360px;
@@ -121,11 +126,7 @@ img {
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+  background-color: #00cc00;
 }
 
 input:checked + .slider:before {
