@@ -56,8 +56,8 @@ function updateButtonsState(visibleImgId) {
 }
 
 function toggleTheme() {
-  var toggler = document.getElementById('theme-toggler');
-  var body = document.getElementsByTagName('body')[0];
+  const toggler = document.getElementById('theme-toggler');
+  const body = document.getElementsByTagName('body')[0];
   if (toggler.checked) {
     body.classList.remove('light-theme');
     body.classList.add('dark-theme');
@@ -67,4 +67,6 @@ function toggleTheme() {
   }
 }
 
-function scrollUp() { window.scrollTo({top : 0, behavior : "smooth"}); }
+function scrollUp() {
+  window.scrollTo({top : 0, behavior : "smooth"});
+}
