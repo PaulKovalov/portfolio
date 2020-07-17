@@ -54,3 +54,19 @@ function updateButtonsState(visibleImgId) {
     nextButton.disabled = false;
   }
 }
+
+function toggleTheme() {
+  const toggler = document.getElementById('theme-toggler');
+  const body = document.getElementsByTagName('body')[0];
+  if (toggler.checked) {
+    body.classList.remove('light-theme');
+    body.classList.add('dark-theme');
+  } else {
+    body.classList.remove('dark-theme');
+    body.classList.add('light-theme');
+  }
+}
+
+function scrollUp() {
+  window.scrollTo({top : 0, behavior : "smooth"});
+}

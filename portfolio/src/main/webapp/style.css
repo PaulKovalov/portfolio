@@ -1,10 +1,30 @@
 @import url(https://fonts.googleapis.com/css?family=Lato&display=swap);
 
+button {
+  border: none;
+  border-radius: 3px;
+  font-size: 16px;
+  padding: 6px;
+}
+
+button:hover {
+  background-color: #99ccff;
+  cursor: pointer;
+}
+
+img {
+  border-radius: 5px;
+  height: 360px;
+  margin: auto;
+  width: auto;
+}
+
 #content {
   font-family: 'Lato', sans-serif;
   margin-left: auto;
   margin-right: auto;
   width: 650px;
+  line-height: 1.5;
 }
 
 #greeting-container {
@@ -13,9 +33,6 @@
 
 #image-viewer img {
   display: none;
-  height: 360px;
-  margin: auto;
-  width: auto;
 }
 
 #image-viewer .visible {
@@ -36,8 +53,82 @@
   align-items: center;
 }
 
-.inline-image {
-  height: 360px;
-  width: auto;
-  margin: auto
+.light-theme {
+  background-color: white;
+  color: black;
+  transition: 0.5s;
+}
+
+.dark-theme {
+  background-color: #404040;
+  color: white;
+  transition: 0.5s;
+}
+
+.dark-theme a {
+  color: aqua;
+}
+
+.up-btn {
+  position: absolute;
+  right: 20px;
+  margin-bottom: 20px;
+}
+
+/* slider styles */
+
+.switch-container {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  width: 150px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  height: 34px;
+  width: 60px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .5s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .5s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #00cc00;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
 }

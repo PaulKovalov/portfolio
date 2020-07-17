@@ -9,6 +9,13 @@
   <body>
     <div id="content">
       <h1>Paul's Portfolio</h1>
+      <div class="switch-container">
+        <p>Dark mode</p>
+        <label class="switch">
+          <input type="checkbox" id="theme-toggler" onchange="toggleTheme()">
+          <span class="slider"></span>
+        </label>
+      </div>
       <h3>Who I am</h3>
       <div>
         <h4>Hi! My name is Paul, I am from Kharkiv, Ukraine. Currently I am a STEP Intern at 
@@ -18,7 +25,7 @@
           <span style="color:rgb(66,133,244)">g</span>
           <span style="color:rgb(15,157,88)">l</span>
           <span style="color:rgb(219,68,55)">e</span>
-          working in the great team of SREs</h4>
+          working in the great team of SREs at Google Cloud</h4>
       </div>
       <h3>My projects</h3>
       <p>The most impactful personal project I did is the Telegram bot for high school students that helps students to prepare for their final exams.
@@ -28,18 +35,18 @@
         The bot is written in Java, uses MySQL as a database and deployed to RaspberryPi in my room :) The link to the bot is @Zno_helper_bot (the interface is in Ukrainian)
       </p>
       <p>
-        During my study at school I liked doing 2D games, I used SFML and C++ for developing. The one I like the most is tetris, you can find on my Github
+        During my study at school I liked doing 2D games, I used SFML and C++ for developing. The one I like the most is Tetris, you can find it on my Github
         <a href="https://github.com/PaulKovalov/tetrisv2.0" target="_blank">here</a>. I also have a few unfinished games such as Agario, Pentago, and drag racing simulator.
       </p>
       <h3>My life</h3>
       <div>
-        <p>I started coding when I was studying in the school and immediately loved it. Since then I took part in many contest and tournaments in competitive programming,
-          sometimes even got prizes :) so I definitely knew who I want to become. Now I am a second-year student at V.N. Karazin Kharkiv National University on faculty of math.
+        <p>I started coding when I was studying in school and immediately loved it. Since then I took part in many contests and tournaments in competitive programming,
+          sometimes even won prizes :) so I definitely knew who I want to become. Now I am a second-year student at V.N. Karazin Kharkiv National University on faculty of math.
           <div class="image-with-label">
-            <img src="images/karazin-main-campus.jpg" class="inline-image" alt="V. N. Karazin National University in Kharkiv">
+            <img src="images/karazin-main-campus.jpg" alt="V. N. Karazin National University in Kharkiv">
             <p>My uni</p>
           </div>
-          My main subjects of study are computer science, math, and algorithms. After the first year at uni, I started working at local outsourcing IT company here in Kharkiv,
+          My main subjects of study are computer science, math, and algorithms. After the first year at uni, I started working at a local outsourcing IT company here in Kharkiv,
           as a part-time web developer, doing mostly backend tasks in Python3. This was my first experience doing commercial coding!
           Apart from programming, I like playing chess, table tennis, and cycling. Cycling is my greatest hobby, I love riding on big distances breaking my distance records, as well 
           as discovering the beautiful sceneries of my motherland. My longest ride so far is 106km, though I'm going to beat it soon with at least 150km in one ride! Below are a few photos
@@ -62,8 +69,9 @@
       </div>
       <h3>Me on social networks</h3>
       <p><a href="https://www.linkedin.com/in/paul-kovalov/" target="_blank">Linkedin</a></p>
-      <p>Here you can check my rides: <a href="https://www.strava.com/athletes/19512872" target="_blank">Strava</a></p>
+      <p><a href="https://www.strava.com/athletes/19512872" target="_blank">Strava</a> here you can check my rides</p>
       <p><a href="https://www.facebook.com/pavlo.kovalov.1/"  target="_blank">FB</a></p>
+      <button onclick="scrollUp()" class="up-btn">Up</button>
     </div>
   </body>
 </html>
