@@ -31,7 +31,6 @@ public class CommentsServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     CommentsHandler commentsHandler = new CommentsHandler();
     String comments = commentsHandler.getComments();
-    System.out.println(comments);
     response.setContentType("application/json");
     response.getWriter().println(comments);
   }
