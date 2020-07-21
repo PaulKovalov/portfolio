@@ -27,6 +27,7 @@ function buildCommentsTree(commentsMap, comment, depth) {
 }
 
 function addCommentToDOM(comment, depth) {
+  // creates a div with two paragraph, one for username and one for comment text
   const commentDOMElement = document.createElement("div");
   const commentAuthorUsername = document.createElement("p");
   commentAuthorUsername.innerText = comment.username;
@@ -35,4 +36,9 @@ function addCommentToDOM(comment, depth) {
   commentDOMElement.style = "margin-left: " + sqrt(Number(depth * 10)) + "px";
   commentDOMElement.appendChild(commentAuthorUsername);
   commentDOMElement.appendChild(commentText);
-} 
+  // next I need a form for posting a reply to this comment
+  const replyForm = document.createElement("form");
+  replyForm.action = "/comments"
+  replyForm.method = "POST"
+
+}

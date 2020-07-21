@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <title>Paul's Portfolio</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="comments.css">
     <script src="script.js"></script>
+    <script src="comments.js"></script>
   </head>
   <body>
     <div id="content">
@@ -72,6 +74,14 @@
       <p><a href="https://www.strava.com/athletes/19512872" target="_blank">Strava</a> here you can check my rides</p>
       <p><a href="https://www.facebook.com/pavlo.kovalov.1/"  target="_blank">FB</a></p>
       <button onclick="scrollUp()" class="up-btn">Up</button>
+      <h3>Comments</h3>
+      <div class="comments" id="comments">
+        <p id="no-comments">No comments yet</p>
+        <form action="/comments">
+          <input type="text" placeholder="Write your comment here"> 
+          <input type="submit">
+        </form>
+      </div>
     </div>
   </body>
 </html>
