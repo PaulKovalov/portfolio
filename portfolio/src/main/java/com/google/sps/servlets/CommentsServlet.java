@@ -40,6 +40,7 @@ public class CommentsServlet extends HttpServlet {
     Gson gson = new Gson();
     Comment comment = gson.fromJson(request.getReader(), Comment.class);
     CommentsHandler commentsHandler = new CommentsHandler();
-    commentsHandler.saveComment(comment);
+    String serializedComment = commentsHandler.saveComment(comment);
+    response.getWriter().println(serializedComment);
   }
 }

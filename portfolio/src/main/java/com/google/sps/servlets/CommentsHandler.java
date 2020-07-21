@@ -21,17 +21,21 @@ public class CommentsHandler {
 
     public String saveComment(Comment comment) {
         Entity commentEntity = new Entity("Comment");
-        for (Field field: Comment.class.getDeclaredFields()) {
-            try {
-                if (field.get(comment) != null) {
-                    commentEntity.setProperty(field.getName(), field.get(comment));
+        try {
+            for (Field field: Comment.class.getDeclaredFields()) {
+                Object f = field.get(comment);
+                if (f != null) {
+                    commentEntity.setProperty(field.getName(), f);
                 }
-            } catch (IllegalAccessException ex) {
-                System.out.println(ex.getMessage());
             }
+            datastore.put(commentEntity);
+            comment.key = commentEntity.getKey().toString();
+            Gson gson = new Gson();
+            return gson.toJson(new CommentRepresentationSerializer(comment));
+        } catch (IllegalAccessException ex) {
+            System.out.println(ex.getMessage());
         }
-        datastore.put(commentEntity);
-        return commentEntity.getKey().toString();
+        return null;
     }
 
     public String getComments() {
@@ -40,19 +44,17 @@ public class CommentsHandler {
         PreparedQuery results = datastore.prepare(query);
         ArrayList<Comment> comments = new ArrayList<>();
         for (Entity entity: results.asIterable()) {
-            Map<String, Object> properties = entity.getProperties();
-            Comment comment = new Comment();
-            for (Entry<String, Object> entry: properties.entrySet()) {
-                try {
+            try {
+                Map<String, Object> properties = entity.getProperties();
+                Comment comment = new Comment();
+                for (Entry<String, Object> entry: properties.entrySet()) {
                     Comment.class.getField(entry.getKey()).set(comment, entry.getValue().toString());
-                } catch (IllegalAccessException ex) {
-                    System.out.println(ex.getMessage());
-                } catch (NoSuchFieldException ex) {
-                    System.out.println(ex.getMessage());
                 }
+                comment.key = entity.getKey().toString();
+                comments.add(comment);
+            } catch (IllegalAccessException | NoSuchFieldException ex) {
+                System.out.println(ex.getMessage());
             }
-            comment.key = entity.getKey().toString();
-            comments.add(comment);
         }
         // now when comments retrieved I can build response data
         // use map to build a list of replies for each comment
