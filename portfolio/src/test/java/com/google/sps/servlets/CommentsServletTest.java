@@ -29,12 +29,10 @@ class CommentsServletTest {
   void testPost() {
     Gson gson = new Gson();
     Comment comment = new Comment();
-    comment.username = "Paul";
-    comment.text = "A nice comment";
-    String jsonRequest = gson.toJson(comment);
     request.setMethod("POST");
-    request.setContentType("application/json");
-    request.setContent(jsonRequest.getBytes());
+    request.setContentType("text/html");
+    request.addParameter("username", "paul");
+    request.addParameter("text", "A nice comment");
     try {
       servlet.doPost(request, response);
       assertEquals(response.getStatus(), 200);
