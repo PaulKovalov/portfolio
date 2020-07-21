@@ -34,28 +34,28 @@
       <version>1.9.59</version>
     </dependency>
     <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-api</artifactId>
-        <version>5.4.2</version>
-        <scope>test</scope>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.4.2</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-engine</artifactId>
-        <version>5.4.2</version>
-        <scope>test</scope>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.4.2</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-test</artifactId>
-        <version>5.2.7.RELEASE</version>
-        <scope>test</scope>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>5.2.7.RELEASE</version>
+      <scope>test</scope>
     </dependency>
      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-web</artifactId>
-        <version>5.2.7.RELEASE</version>
-        <scope>test</scope>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>5.2.7.RELEASE</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.appengine</groupId>
@@ -64,16 +64,16 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-        <groupId>com.google.appengine</groupId>
-        <artifactId>appengine-api-labs</artifactId>
-        <version>1.5.3</version>
-        <scope>test</scope>
+      <groupId>com.google.appengine</groupId>
+      <artifactId>appengine-api-labs</artifactId>
+      <version>1.5.3</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
-        <groupId>com.google.appengine</groupId>
-        <artifactId>appengine-api-stubs</artifactId>
-        <version>1.5.3</version>
-        <scope>test</scope>
+      <groupId>com.google.appengine</groupId>
+      <artifactId>appengine-api-stubs</artifactId>
+      <version>1.5.3</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -92,9 +92,9 @@
         </configuration>
       </plugin>
       <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.22.1</version>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.22.1</version>
         </plugin>
     </plugins>
   </build>
