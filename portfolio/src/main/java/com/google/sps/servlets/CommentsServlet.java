@@ -37,12 +37,17 @@ public class CommentsServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Gson gson = new Gson();
-    Comment comment = gson.fromJson(request.getReader(), Comment.class);
-    if (comment == null || comment.username == null || comment.text == null
-        || comment.text.trim().length() == 0) {
+    String username = request.getParameter("username");
+    String text = request.getParameter("text");
+    // if any of the necessary fields are absent, raise an error
+    if (username == null || text == null || text.trim().length() == 0) {
       response.sendError(BAD_REQUEST, "Invalid payload");
       return;
+    }
+    String replyTo = request.getParameter("replyTo"); // this one is optional
+    Comment comment = new Comment(username, text);
+    if (replyTo != null) {
+      comment.replyTo = replyTo;
     }
     CommentsHandler commentsHandler = new CommentsHandler();
     String serializedComment = commentsHandler.saveComment(comment);

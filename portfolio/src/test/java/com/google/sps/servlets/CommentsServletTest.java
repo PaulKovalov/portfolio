@@ -37,14 +37,10 @@ class CommentsServletTest {
 
   @Test
   public void testCreateWithValidPayload() {
-    Gson gson = new Gson();
-    Comment comment = new Comment();
-    comment.username = "Paul";
-    comment.text = "A nice comment";
-    String jsonRequest = gson.toJson(comment);
     request.setMethod("POST");
-    request.setContentType("application/json");
-    request.setContent(jsonRequest.getBytes());
+    request.setContentType("text/html");
+    request.addParameter("username", "Paul");
+    request.addParameter("text", "A nice comment");
     try {
       servlet.doPost(request, response);
       assertEquals(response.getStatus(), OK);
@@ -59,11 +55,8 @@ class CommentsServletTest {
 
   @Test
   public void testCreateWithInvalidPayload_v1() {
-    Gson gson = new Gson();
-    String jsonRequest = gson.toJson(null);
     request.setMethod("POST");
-    request.setContentType("application/json");
-    request.setContent(jsonRequest.getBytes());
+    request.setContentType("text/html");
     try {
       servlet.doPost(request, response);
       assertEquals(response.getStatus(), BAD_REQUEST);
@@ -74,14 +67,10 @@ class CommentsServletTest {
 
   @Test
   public void testCreateWithInvalidPayload_v2() {
-    Gson gson = new Gson();
-    Comment comment = new Comment();
-    // set the username only, without the text
-    comment.username = "Paul";
-    String jsonRequest = gson.toJson(comment);
     request.setMethod("POST");
-    request.setContentType("application/json");
-    request.setContent(jsonRequest.getBytes());
+    request.setContentType("text/html");
+    // set the username only, without the text
+    request.addParameter("username", "Paul");
     try {
       servlet.doPost(request, response);
       assertEquals(response.getStatus(), BAD_REQUEST);
@@ -92,15 +81,11 @@ class CommentsServletTest {
 
   @Test
   public void testCreateWithInvalidPayload_v3() {
-    Gson gson = new Gson();
-    Comment comment = new Comment();
-    // set the username and text full of spaces
-    comment.username = "Paul";
-    comment.text = "     ";
-    String jsonRequest = gson.toJson(comment);
     request.setMethod("POST");
-    request.setContentType("application/json");
-    request.setContent(jsonRequest.getBytes());
+    request.setContentType("text/html");
+    request.addParameter("username", "Paul");
+    // set the username and text full of spaces
+    request.addParameter("text", "        ");
     try {
       servlet.doPost(request, response);
       assertEquals(response.getStatus(), BAD_REQUEST);
