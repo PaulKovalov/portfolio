@@ -16,5 +16,6 @@ public class CommentRepresentationSerializer {
     this.text = comment.text;
     this.replies = new ArrayList<>();
     this.key = comment.key;
+    this.replyTo = comment.replyTo;
   }
 }
