@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.repackaged.com.google.gson.JsonArray;
 import com.google.appengine.repackaged.com.google.gson.JsonElement;
@@ -26,6 +27,12 @@ class CommentsServletTest {
   private MockHttpServletResponse response;
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+
+  // helper method that quotes the string
+  public String quoted(String unquoted) {
+    return "\"" + unquoted + "\"";
+  }
+
   @BeforeEach
   public void setUp() {
     servlet = new CommentsServlet();
@@ -42,13 +49,17 @@ class CommentsServletTest {
     request.setContentType("text/html");
     request.addParameter("username", "paul");
     request.addParameter("text", "A nice comment");
+    // add a valid reply to field
+    String replyToKey = KeyFactory.keyToString(commentEntity.getKey());
+    request.addParameter("replyTo", replyToKey);
     try {
       servlet.doPost(request, response);
       assertEquals(response.getStatus(), OK);
       String responseString = response.getContentAsString();
       JsonObject jsonObject = (new JsonParser()).parse(responseString).getAsJsonObject();
-      assertEquals(jsonObject.get("username").toString(), "\"Paul\"");
-      assertEquals(jsonObject.get("text").toString(), "\"A nice comment\"");
+      assertEquals(jsonObject.get("username").toString(), quoted("Paul"));
+      assertEquals(jsonObject.get("text").toString(), quoted("A nice comment"));
+      assertEquals(jsonObject.get("replyTo").toString(), quoted(replyToKey));
     } catch (IOException ex) {
       System.out.println(ex.getMessage());
     }
@@ -138,8 +149,8 @@ class CommentsServletTest {
       JsonArray jsonArray = (new JsonParser()).parse(responseString).getAsJsonArray();
       for (JsonElement element : jsonArray) {
         JsonObject jsonObject = element.getAsJsonObject();
-        assertEquals(jsonObject.get("username").toString(), "\"paul\"");
-        assertEquals(jsonObject.get("text").toString(), "\"Very cool comment text\"");
+        assertEquals(jsonObject.get("username").toString(), quoted("paul"));
+        assertEquals(jsonObject.get("text").toString(), quoted("Very cool comment text"));
       }
     } catch (IOException ex) {
       System.out.println(ex.getMessage());
