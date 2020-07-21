@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/comments")
 public class CommentsServlet extends HttpServlet {
+  private final int BAD_REQUEST = 400;
   /**
    * Returns the list of all comments
    */
