@@ -53,7 +53,7 @@ public class CommentsServlet extends HttpServlet {
       String serializedComment = commentsHandler.saveComment(comment);
       response.getWriter().println(serializedComment);
     } catch (BadRequestException ex) {
-      response.sendError(400, ex.getMessage());
+      response.sendError(BAD_REQUEST, ex.getMessage());
     }
   }
 }
