@@ -6,5 +6,5 @@ public class Comment {
   public String text;
   public String replyTo;
   public String key;
-  // TODO add timestamp here
+  public String timestamp;
 }

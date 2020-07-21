@@ -5,6 +5,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class CommentsHandler {
   public String saveComment(Comment comment) {
     Entity commentEntity = new Entity("Comment");
     try {
+      comment.timestamp = Long.toString(System.currentTimeMillis());
       for (Field field : Comment.class.getDeclaredFields()) {
         Object f = field.get(comment);
         if (f != null) {
@@ -40,7 +42,7 @@ public class CommentsHandler {
 
   public String getComments() {
     Gson gson = new Gson();
-    Query query = new Query("Comment");
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
     PreparedQuery results = datastore.prepare(query);
     ArrayList<Comment> comments = new ArrayList<>();
     for (Entity entity : results.asIterable()) {
