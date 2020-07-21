@@ -26,9 +26,7 @@ public class CommentsHandler {
   public String saveComment(Comment comment) throws BadRequestException {
     Entity commentEntity = new Entity("Comment");
     try {
-<<<<<<< HEAD
       comment.timestamp = Long.toString(System.currentTimeMillis());
-=======
       // validate replyTo field if there is one
       if (comment.replyTo != null) {
         Key replyToKey = KeyFactory.stringToKey(comment.replyTo);
@@ -38,7 +36,6 @@ public class CommentsHandler {
           throw new BadRequestException("field replyTo has invalid value");
         }
       }
->>>>>>> server-setup
       for (Field field : Comment.class.getDeclaredFields()) {
         Object f = field.get(comment);
         if (f != null) {
