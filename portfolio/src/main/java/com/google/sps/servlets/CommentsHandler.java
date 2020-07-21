@@ -3,6 +3,9 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
@@ -20,10 +23,22 @@ public class CommentsHandler {
     datastore = DatastoreServiceFactory.getDatastoreService();
   };
 
-  public String saveComment(Comment comment) {
+  public String saveComment(Comment comment) throws BadRequestException {
     Entity commentEntity = new Entity("Comment");
     try {
+<<<<<<< HEAD
       comment.timestamp = Long.toString(System.currentTimeMillis());
+=======
+      // validate replyTo field if there is one
+      if (comment.replyTo != null) {
+        Key replyToKey = KeyFactory.stringToKey(comment.replyTo);
+        try {
+          datastore.get(replyToKey);
+        } catch (EntityNotFoundException ex) {
+          throw new BadRequestException("field replyTo has invalid value");
+        }
+      }
+>>>>>>> server-setup
       for (Field field : Comment.class.getDeclaredFields()) {
         Object f = field.get(comment);
         if (f != null) {
@@ -35,9 +50,8 @@ public class CommentsHandler {
       Gson gson = new Gson();
       return gson.toJson(new CommentRepresentationSerializer(comment));
     } catch (IllegalAccessException ex) {
-      System.out.println(ex.getMessage());
+      throw new BadRequestException("Invalid payload");
     }
-    return null;
   }
 
   public String getComments() {

@@ -8,6 +8,7 @@ public class CommentRepresentationSerializer {
   public String text;
   public String key;
   public String timestamp;
+  public String replyTo;
   // the idea here is to have a list of ids of comments
   // that are direct replies to this comment
   public ArrayList<String> replies;
