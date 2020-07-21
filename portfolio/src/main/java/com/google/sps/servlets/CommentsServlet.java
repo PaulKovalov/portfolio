@@ -14,7 +14,6 @@
 
 package com.google.sps.servlets;
 
-
 import com.google.gson.Gson;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -24,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/comments")
 public class CommentsServlet extends HttpServlet {
+  private final int BAD_REQUEST = 400;
   /**
    * Returns the list of all comments
    */
@@ -39,6 +39,11 @@ public class CommentsServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Gson gson = new Gson();
     Comment comment = gson.fromJson(request.getReader(), Comment.class);
+    if (comment == null || comment.username == null || comment.text == null
+        || comment.text.trim().length() == 0) {
+      response.sendError(BAD_REQUEST, "Invalid payload");
+      return;
+    }
     CommentsHandler commentsHandler = new CommentsHandler();
     String serializedComment = commentsHandler.saveComment(comment);
     response.getWriter().println(serializedComment);
