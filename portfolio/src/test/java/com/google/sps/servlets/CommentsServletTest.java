@@ -12,7 +12,6 @@ import com.google.appengine.repackaged.com.google.gson.JsonObject;
 import com.google.appengine.repackaged.com.google.gson.JsonParser;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.google.gson.Gson;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -86,6 +85,21 @@ class CommentsServletTest {
     request.addParameter("username", "Paul");
     // set the username and text full of spaces
     request.addParameter("text", "        ");
+    try {
+      servlet.doPost(request, response);
+      assertEquals(response.getStatus(), BAD_REQUEST);
+    } catch (IOException ex) {
+      System.out.println(ex.getMessage());
+    }
+  }
+
+  @Test
+  public void testCreateWithInvalidPayload_v4() {
+    request.setMethod("POST");
+    request.addParameter("username", "Paul");
+    request.addParameter("text", "A nice comment");
+    // add reference to nuexisting comment
+    request.addParameter("replyTo", "Unexisting key");
     try {
       servlet.doPost(request, response);
       assertEquals(response.getStatus(), BAD_REQUEST);
