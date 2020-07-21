@@ -1,21 +1,19 @@
 package com.google.sps.servlets;
 import static com.google.appengine.api.datastore.FetchOptions.Builder.withLimit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.repackaged.com.google.gson.JsonObject;
 import com.google.appengine.repackaged.com.google.gson.JsonArray;
 import com.google.appengine.repackaged.com.google.gson.JsonElement;
+import com.google.appengine.repackaged.com.google.gson.JsonObject;
 import com.google.appengine.repackaged.com.google.gson.JsonParser;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.gson.Gson;
 import java.io.IOException;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -51,9 +49,9 @@ class CommentsServletTest {
       servlet.doPost(request, response);
       assertEquals(response.getStatus(), OK);
       String responseString = response.getContentAsString();
-      assertTrue(responseString.contains("key"));
-      assertTrue(responseString.contains("username"));
-      assertTrue(responseString.contains("text"));
+      JsonObject jsonObject = (new JsonParser()).parse(responseString).getAsJsonObject();
+      assertEquals(jsonObject.get("username").toString(), "\"Paul\"");
+      assertEquals(jsonObject.get("text").toString(), "\"A nice comment\"");
     } catch (IOException ex) {
       System.out.println(ex.getMessage());
     }
