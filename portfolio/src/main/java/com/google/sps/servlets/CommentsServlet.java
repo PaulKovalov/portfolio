@@ -14,8 +14,6 @@
 
 package com.google.sps.servlets;
 
-
-import com.google.gson.Gson;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -45,7 +43,11 @@ public class CommentsServlet extends HttpServlet {
       comment.replyTo = replyTo;
     }
     CommentsHandler commentsHandler = new CommentsHandler();
-    String serializedComment = commentsHandler.saveComment(comment);
-    response.getWriter().println(serializedComment);
+    try {
+      String serializedComment = commentsHandler.saveComment(comment);
+      response.getWriter().println(serializedComment);
+    } catch (BadRequestException ex) {
+      response.sendError(400, ex.getMessage());
+    }
   }
 }
