@@ -6,5 +6,12 @@ public class Comment {
   public String text;
   public String replyTo;
   public String key;
+
+  public Comment(String username, String text) {
+    this.username = username;
+    this.text = text;
+  }
+  // Sometimes I create comments without parameters, so I need this constructor as well
+  public Comment() {}
   // TODO add timestamp here
 }

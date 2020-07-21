@@ -37,8 +37,13 @@ public class CommentsServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Gson gson = new Gson();
-    Comment comment = gson.fromJson(request.getReader(), Comment.class);
+    String username = request.getParameter("username");
+    String text = request.getParameter("text");
+    String replyTo = request.getParameter("replyTo"); // this one is optional
+    Comment comment = new Comment(username, text);
+    if (replyTo != null) {
+      comment.replyTo = replyTo;
+    }
     CommentsHandler commentsHandler = new CommentsHandler();
     String serializedComment = commentsHandler.saveComment(comment);
     response.getWriter().println(serializedComment);
