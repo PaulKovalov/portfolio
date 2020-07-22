@@ -12,7 +12,14 @@ public class Comment {
     this.username = username;
     this.text = text;
   }
+
   // Sometimes I create comments without parameters, so I need this constructor as well
   public Comment() {}
-  // TODO add timestamp here
+
+  public Comment(Comment other) {
+    this.username = other.username;
+    this.text = other.text;
+    this.replyTo = other.replyTo;
+    this.key = other.key;
+  }
 }
