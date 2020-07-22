@@ -8,6 +8,10 @@ async function fetchComments() {
     const comment = commentsJson[i];
     commentsMap[comment.key] = comment;
   }
+  if (commentsJson.length) {
+    // if there are some comments, remove label 'No comments yet'
+    document.getElementById('no-comments').remove();
+  }
   // build a tree, starting DFS from the vertex (comments) that have no incoming vertexes (are not replies)
   for (const i in commentsMap) {
     const comment = commentsMap[i];
