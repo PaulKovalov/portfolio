@@ -38,6 +38,27 @@ function addCommentToDOM(comment, depth) {
   commentDOMElement.classList.add('comment')
   commentDOMElement.style = 'margin-left: ' + Math.sqrt(Number(depth * 100)) + 'px';
   commentDOMElement.id = comment.key;
+  const commentText = document.createElement('p');
+  commentText.innerText = comment.text;
+  const showReplyFormButton = document.createElement('button');
+  showReplyFormButton.innerText = 'Reply';
+  showReplyFormButton.id = comment.key + '_button'; // this button must have unique id as I will change it's text
+                                                    // depending on form state
+  showReplyFormButton.onclick = function() {
+    toggleReplyField(comment.key);
+  };
+  const replyForm = getCommentReplyForm(comment);
+  const commentHeader = getCommentHeader(comment);
+  // append everything to the comment div
+  commentDOMElement.appendChild(commentHeader);
+  commentDOMElement.appendChild(commentText);
+  commentDOMElement.appendChild(replyForm);
+  commentDOMElement.appendChild(showReplyFormButton);
+  // attach created comment to the comments div
+  document.getElementById('comments').appendChild(commentDOMElement);
+}
+
+function getCommentHeader(comment) {
   const commentAuthorUsername = document.createElement('h5');
   commentAuthorUsername.innerText = comment.username;
   const commentDate = document.createElement('p');
@@ -47,16 +68,10 @@ function addCommentToDOM(comment, depth) {
   commentHeader.classList.add('comment-header');
   commentHeader.appendChild(commentAuthorUsername);
   commentHeader.appendChild(commentDate);
-  const commentText = document.createElement('p');
-  commentText.innerText = comment.text;
-  const showReplyFormButton = document.createElement('button');
-  showReplyFormButton.innerText = 'Reply';
-  showReplyFormButton.id = comment.key + '_button'; // this button must have unique id as I will change it's text
-                                                    // depending on form state
-  showReplyFormButton.onclick =
-      function() {
-    toggleReplyField(comment.key);
-  }
+  return commentHeader;
+}
+
+function getCommentReplyForm(comment) {
   // next I need a form for posting a reply to this comment
   const replyForm = document.createElement('form');
   replyForm.action = '/comments';
@@ -84,15 +99,8 @@ function addCommentToDOM(comment, depth) {
   replyForm.appendChild(formReplySubmit);
   replyForm.classList.add('hidden');
   replyForm.id = comment.key + '_form';
-  // append everything to the comment div
-  commentDOMElement.appendChild(commentHeader);
-  commentDOMElement.appendChild(commentText);
-  commentDOMElement.appendChild(replyForm);
-  commentDOMElement.appendChild(showReplyFormButton);
-  // attach created comment to the comments div
-  document.getElementById('comments').appendChild(commentDOMElement);
+  return replyForm;
 }
-
 // toggles visibility of the reply form
 function toggleReplyField(commentId) {
   const showReplyFormButtonId = commentId + '_button'; // generate button's id
