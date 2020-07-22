@@ -80,8 +80,9 @@
           fetchComments();
         </script>
         <p id="no-comments">No comments yet</p>
-        <form action="/comments">
-          <input type="text" placeholder="Write your comment here"> 
+        <form action="/comments" method="POST">
+          <input type="text" name="username" placeholder="Your username">
+          <input type="text" name="text" placeholder="Write your comment here">
           <input type="submit">
         </form>
       </div>

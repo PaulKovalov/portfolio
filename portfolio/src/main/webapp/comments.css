@@ -1,3 +1,15 @@
 .comments {
   margin-bottom: 50px;
 }
+
+.comment {
+  margin-top: 10px;
+}
+
+.comment p {
+  margin-top: 0px;
+}
+
+.comment h5 {
+  margin-bottom: 0px;
+}
