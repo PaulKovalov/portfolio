@@ -66,9 +66,7 @@ class CommentsServletTest {
   }
 
   @Test
-  public void testCreateWithInvalidPayload_v1() {
-    Gson gson = new Gson();
-    String jsonRequest = gson.toJson(null);
+  public void testCreateWithNoPayload() {
     request.setMethod("POST");
     request.setContentType("application/json");
     request.setContent(jsonRequest.getBytes());
@@ -81,9 +79,9 @@ class CommentsServletTest {
   }
 
   @Test
-  public void testCreateWithInvalidPayload_v2() {
-    Gson gson = new Gson();
-    Comment comment = new Comment();
+  public void testCreateWithAbsentCommentText() {
+    request.setMethod("POST");
+    request.setContentType("text/html");
     // set the username only, without the text
     comment.username = "Paul";
     String jsonRequest = gson.toJson(comment);
@@ -99,26 +97,7 @@ class CommentsServletTest {
   }
 
   @Test
-  public void testCreateWithInvalidPayload_v3() {
-    Gson gson = new Gson();
-    Comment comment = new Comment();
-    // set the username and text full of spaces
-    comment.username = "Paul";
-    comment.text = "     ";
-    String jsonRequest = gson.toJson(comment);
-    request.setMethod("POST");
-    request.setContentType("application/json");
-    request.setContent(jsonRequest.getBytes());
-    try {
-      servlet.doPost(request, response);
-      assertEquals(response.getStatus(), BAD_REQUEST);
-    } catch (IOException ex) {
-      System.out.println(ex.getMessage());
-    }
-  }
-
-  @Test
-  public void testCreateWithInvalidPayload_v4() {
+  public void testCreateWithInvalidCommentTextValue() {
     request.setMethod("POST");
     request.addParameter("username", "Paul");
     request.addParameter("text", "A nice comment");
@@ -133,7 +112,7 @@ class CommentsServletTest {
   }
 
   @Test
-  public void testGetComments_v1() {
+  public void testGetComments() {
     // insert comment entity to the datastore
     DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
     assertEquals(0, ds.prepare(new Query("Comment")).countEntities(withLimit(10)));
