@@ -7,11 +7,11 @@
 }
 
 .comment p {
-  margin-top: 0px;
+  margin: 0px;
 }
 
 .comment h5 {
-  margin-bottom: 0px;
+  margin: 0px 10px 0px 0px;
 }
 
 .hidden {
@@ -25,4 +25,11 @@
 .comment button {
   font-size: 12px;
   padding: 4px;
+}
+
+.comment-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
 }

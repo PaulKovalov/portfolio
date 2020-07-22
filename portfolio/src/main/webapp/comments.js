@@ -40,6 +40,13 @@ function addCommentToDOM(comment, depth) {
   commentDOMElement.id = comment.key;
   const commentAuthorUsername = document.createElement('h5');
   commentAuthorUsername.innerText = comment.username;
+  const commentDate = document.createElement('p');
+  commentDate.innerText = humanReadableDateFromTimestamp(comment.timestamp);
+  // header for both username and date
+  const commentHeader = document.createElement('div');
+  commentHeader.classList.add('comment-header');
+  commentHeader.appendChild(commentAuthorUsername);
+  commentHeader.appendChild(commentDate);
   const commentText = document.createElement('p');
   commentText.innerText = comment.text;
   const showReplyFormButton = document.createElement('button');
@@ -78,7 +85,7 @@ function addCommentToDOM(comment, depth) {
   replyForm.classList.add('hidden');
   replyForm.id = comment.key + '_form';
   // append everything to the comment div
-  commentDOMElement.appendChild(commentAuthorUsername);
+  commentDOMElement.appendChild(commentHeader);
   commentDOMElement.appendChild(commentText);
   commentDOMElement.appendChild(replyForm);
   commentDOMElement.appendChild(showReplyFormButton);
@@ -89,7 +96,7 @@ function addCommentToDOM(comment, depth) {
 // toggles visibility of the reply form
 function toggleReplyField(commentId) {
   const showReplyFormButtonId = commentId + '_button'; // generate button's id
-  const replyFormId = commentId + '_form'; // generate reply form id
+  const replyFormId = commentId + '_form';             // generate reply form id
   const button = document.getElementById(showReplyFormButtonId);
   button.innerText = (button.innerText === 'Cancel' ? 'Reply' : 'Cancel'); // change text depending on the mode
   const replyForm = document.getElementById(replyFormId);
@@ -102,4 +109,13 @@ function toggleReplyField(commentId) {
     replyForm.classList.remove('shown');
     replyForm.classList.add('hidden');
   }
+}
+
+function humanReadableDateFromTimestamp(timestamp) {
+  const dateObj = new Date(Number(timestamp));
+  // 10 first characters (yyyy-mm-dd) are human readable, other is not
+  return dateObj.toISOString().slice(0, 10) + ' at ' +
+         (dateObj.getHours() < 10 ? '0' + dateObj.getHours() : dateObj.getHours()) + ':' +
+         (dateObj.getMinutes() < 10 ? '0' + dateObj.getMinutes() : dateObj.getMinutes()) + ':' +
+         (dateObj.getSeconds() < 10 ? '0' + dateObj.getSeconds() : dateObj.getSeconds());
 }
