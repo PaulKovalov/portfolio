@@ -12,7 +12,6 @@ import com.google.appengine.repackaged.com.google.gson.JsonObject;
 import com.google.appengine.repackaged.com.google.gson.JsonParser;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.google.gson.Gson;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,7 +53,7 @@ class CommentsServletTest {
   }
 
   @Test
-  public void testCreateWithInvalidPayload_v1() {
+  public void testCreateWithNoPayload() {
     request.setMethod("POST");
     request.setContentType("text/html");
     try {
@@ -66,7 +65,7 @@ class CommentsServletTest {
   }
 
   @Test
-  public void testCreateWithInvalidPayload_v2() {
+  public void testCreateWithAbsentCommentText() {
     request.setMethod("POST");
     request.setContentType("text/html");
     // set the username only, without the text
@@ -80,7 +79,7 @@ class CommentsServletTest {
   }
 
   @Test
-  public void testCreateWithInvalidPayload_v3() {
+  public void testCreateWithInvalidCommentTextValue() {
     request.setMethod("POST");
     request.setContentType("text/html");
     request.addParameter("username", "Paul");
@@ -95,7 +94,7 @@ class CommentsServletTest {
   }
 
   @Test
-  public void testGetComments_v1() {
+  public void testGetComments() {
     // insert comment entity to the datastore
     DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
     assertEquals(0, ds.prepare(new Query("Comment")).countEntities(withLimit(10)));
