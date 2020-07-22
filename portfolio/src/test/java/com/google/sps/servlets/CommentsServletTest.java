@@ -42,7 +42,7 @@ class CommentsServletTest {
   }
 
   @Test
-  public void testCreateWithValidPayload_v1() {
+  public void testCreateWithValidPayload() {
     request.setMethod("POST");
     request.setContentType("text/html");
     request.addParameter("username", "Paul");
@@ -60,7 +60,7 @@ class CommentsServletTest {
   }
 
   @Test
-  public void testCreateWithValidPayload_v2() {
+  public void testCreateWithValidPayloadAndValidReplyKey() {
     // create a comment and put it to the datastore
     DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
     Entity commentEntity = new Entity("Comment");
@@ -88,7 +88,7 @@ class CommentsServletTest {
   }
 
   @Test
-  public void testCreateWithInvalidPayload_v1() {
+  public void testCreateWithNoPayload() {
     request.setMethod("POST");
     request.setContentType("text/html");
     try {
@@ -100,7 +100,7 @@ class CommentsServletTest {
   }
 
   @Test
-  public void testCreateWithInvalidPayload_v2() {
+  public void testCreateWithAbsentCommentText() {
     request.setMethod("POST");
     request.setContentType("text/html");
     // set the username only, without the text
@@ -114,7 +114,7 @@ class CommentsServletTest {
   }
 
   @Test
-  public void testCreateWithInvalidPayload_v3() {
+  public void testCreateWithInvalidCommentTextValue() {
     request.setMethod("POST");
     request.setContentType("text/html");
     request.addParameter("username", "Paul");
@@ -129,11 +129,11 @@ class CommentsServletTest {
   }
 
   @Test
-  public void testCreateWithInvalidPayload_v4() {
+  public void testCreateWithInvalidReplyKey() {
     request.setMethod("POST");
     request.addParameter("username", "Paul");
     request.addParameter("text", "A nice comment");
-    // add reference to nuexisting comment
+    // add reference to unexisting comment
     request.addParameter("replyTo", "Unexisting key");
     try {
       servlet.doPost(request, response);
@@ -144,7 +144,7 @@ class CommentsServletTest {
   }
 
   @Test
-  public void testGetComments_v1() {
+  public void testGetComments() {
     // insert comment entity to the datastore
     DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
     assertEquals(0, ds.prepare(new Query("Comment")).countEntities(withLimit(10)));
