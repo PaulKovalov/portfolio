@@ -13,3 +13,16 @@
 .comment h5 {
   margin-bottom: 0px;
 }
+
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: block;
+}
+
+.comment button {
+  font-size: 12px;
+  padding: 4px;
+}
