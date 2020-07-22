@@ -67,7 +67,7 @@ public class CommentsHandler {
         for (Entry<String, Object> entry : properties.entrySet()) {
           Comment.class.getField(entry.getKey()).set(comment, entry.getValue().toString());
         }
-        comment.key = entity.getKey().toString();
+        comment.key = KeyFactory.keyToString(entity.getKey());
         comments.add(comment);
       } catch (IllegalAccessException | NoSuchFieldException ex) {
         System.out.println(ex.getMessage());
