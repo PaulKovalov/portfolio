@@ -76,6 +76,9 @@
       <button onclick="scrollUp()" class="up-btn">Up</button>
       <h3>Comments</h3>
       <div class="comments" id="comments">
+        <script>
+          fetchComments();
+        </script>
         <p id="no-comments">No comments yet</p>
         <form action="/comments">
           <input type="text" placeholder="Write your comment here"> 
