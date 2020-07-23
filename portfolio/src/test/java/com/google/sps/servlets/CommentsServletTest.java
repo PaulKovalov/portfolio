@@ -22,6 +22,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 class CommentsServletTest {
   private final int BAD_REQUEST = 400;
   private final int OK = 200;
+  private final int REDIRECT = 302;
   private CommentsServlet servlet;
   private MockHttpServletRequest request;
   private MockHttpServletResponse response;
@@ -49,7 +50,7 @@ class CommentsServletTest {
     request.addParameter("text", "A nice comment");
     try {
       servlet.doPost(request, response);
-      assertEquals(response.getStatus(), OK);
+      assertEquals(response.getStatus(), REDIRECT);
       String responseString = response.getContentAsString();
       JsonObject jsonObject = (new JsonParser()).parse(responseString).getAsJsonObject();
       assertEquals(jsonObject.get("username").toString(), quoted("Paul"));
@@ -76,7 +77,7 @@ class CommentsServletTest {
     request.addParameter("replyTo", replyToKey);
     try {
       servlet.doPost(request, response);
-      assertEquals(response.getStatus(), OK);
+      assertEquals(response.getStatus(), REDIRECT);
       String responseString = response.getContentAsString();
       JsonObject jsonObject = (new JsonParser()).parse(responseString).getAsJsonObject();
       assertEquals(jsonObject.get("username").toString(), quoted("Paul"));
