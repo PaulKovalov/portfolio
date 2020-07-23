@@ -1,7 +1,6 @@
 /* this file is a set of methods for fetching/creating comments */
 
 async function fetchComments() {
-  console.log('called');
   const response = await fetch('/comments');
   const commentsJson = await response.json();
   // create a hash table of type "comment id" -> "comment" to build a comment tree
@@ -65,7 +64,6 @@ function getCommentHeader(comment) {
   commentAuthorUsername.innerText = comment.username;
   const commentDate = document.createElement('p');
   commentDate.innerText = humanReadableDateFromTimestamp(comment.timestamp);
-  // commentDate.innerText = DateFormat('dd/MM/yyyy HH:mm:ss', new Date(Number(comment.timestamp)).getTime());
   // header for both username and date
   const commentHeader = document.createElement('div');
   commentHeader.classList.add('comment-header');
