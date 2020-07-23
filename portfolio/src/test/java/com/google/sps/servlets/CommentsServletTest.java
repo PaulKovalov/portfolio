@@ -22,6 +22,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 class CommentsServletTest {
   private final int BAD_REQUEST = 400;
   private final int OK = 200;
+  private final int REDIRECT = 302;
   private CommentsServlet servlet;
   private MockHttpServletRequest request;
   private MockHttpServletResponse response;
@@ -47,14 +48,38 @@ class CommentsServletTest {
     Comment comment = new Comment();
     request.setMethod("POST");
     request.setContentType("text/html");
-    request.addParameter("username", "paul");
+    request.addParameter("username", "Paul");
+    request.addParameter("text", "A nice comment");
+    try {
+      servlet.doPost(request, response);
+      assertEquals(response.getStatus(), REDIRECT);
+      String responseString = response.getContentAsString();
+      JsonObject jsonObject = (new JsonParser()).parse(responseString).getAsJsonObject();
+      assertEquals(jsonObject.get("username").toString(), quoted("Paul"));
+      assertEquals(jsonObject.get("text").toString(), quoted("A nice comment"));
+    } catch (IOException ex) {
+      System.out.println(ex.getMessage());
+    }
+  }
+
+  @Test
+  public void testCreateWithValidPayloadAndValidReplyKey() {
+    // create a comment and put it to the datastore
+    DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+    Entity commentEntity = new Entity("Comment");
+    ds.put(commentEntity);
+    commentEntity.setProperty("username", "paul");
+    commentEntity.setProperty("text", "Very cool comment text");
+    request.setMethod("POST");
+    request.setContentType("text/html");
+    request.addParameter("username", "Paul");
     request.addParameter("text", "A nice comment");
     // add a valid reply to field
     String replyToKey = KeyFactory.keyToString(commentEntity.getKey());
     request.addParameter("replyTo", replyToKey);
     try {
       servlet.doPost(request, response);
-      assertEquals(response.getStatus(), OK);
+      assertEquals(response.getStatus(), REDIRECT);
       String responseString = response.getContentAsString();
       JsonObject jsonObject = (new JsonParser()).parse(responseString).getAsJsonObject();
       assertEquals(jsonObject.get("username").toString(), quoted("Paul"));
