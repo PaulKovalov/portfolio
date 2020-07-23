@@ -1,5 +1,7 @@
+/* this file is a set of methods for fetching/creating comments */
 
 async function fetchComments() {
+  console.log('called');
   const response = await fetch('/comments');
   const commentsJson = await response.json();
   // create a hash table of type "comment id" -> "comment" to build a comment tree
@@ -63,6 +65,7 @@ function getCommentHeader(comment) {
   commentAuthorUsername.innerText = comment.username;
   const commentDate = document.createElement('p');
   commentDate.innerText = humanReadableDateFromTimestamp(comment.timestamp);
+  // commentDate.innerText = DateFormat('dd/MM/yyyy HH:mm:ss', new Date(Number(comment.timestamp)).getTime());
   // header for both username and date
   const commentHeader = document.createElement('div');
   commentHeader.classList.add('comment-header');
@@ -76,31 +79,30 @@ function getCommentReplyForm(comment) {
   const replyForm = document.createElement('form');
   replyForm.action = '/comments';
   replyForm.method = 'POST';
-  const formReplyUsername = document.createElement('input');
-  formReplyUsername.type = 'text';
-  formReplyUsername.name = 'username';
-  formReplyUsername.placeholder = 'Your username';
-  const formReplyText = document.createElement('input');
-  formReplyText.type = 'text';
-  formReplyText.name = 'text';
-  formReplyText.placeholder = 'Write reply here';
+  // create form elements
+  replyForm.appendChild(createFormInput('text', 'username', 'Your username'));
+  replyForm.appendChild(createFormInput('text', 'text', 'Write reply here'));
   // this element is invisible but it holds the replyTo id
-  const formReplyToId = document.createElement('input');
-  formReplyToId.type = 'text';
-  formReplyToId.name = 'replyTo';
-  formReplyToId.value = comment.key;
-  formReplyToId.hidden = true;
-  const formReplySubmit = document.createElement('input');
-  formReplySubmit.type = 'submit';
-  // now add all this form elements to the form
-  replyForm.appendChild(formReplyUsername);
-  replyForm.appendChild(formReplyText);
-  replyForm.appendChild(formReplyToId);
-  replyForm.appendChild(formReplySubmit);
+  replyForm.appendChild(createFormInput('text', 'replyTo', '', comment.key, true));
+  replyForm.appendChild(createFormInput('submit', '', ''));
   replyForm.classList.add('hidden');
   replyForm.id = comment.key + '_form';
   return replyForm;
 }
+
+// creates input element with the given params
+function createFormInput(type, name, placeholder, value = null, hidden = false) {
+  const input = document.createElement('input');
+  input.type = type;
+  input.name = name;
+  input.placeholder = placeholder;
+  if (value !== null) {
+    input.value = value;
+  }
+  input.hidden = hidden;
+  return input;
+}
+
 // toggles visibility of the reply form
 function toggleReplyField(commentId) {
   const showReplyFormButtonId = commentId + '_button'; // generate button's id
@@ -117,13 +119,4 @@ function toggleReplyField(commentId) {
     replyForm.classList.remove('shown');
     replyForm.classList.add('hidden');
   }
-}
-
-function humanReadableDateFromTimestamp(timestamp) {
-  const dateObj = new Date(Number(timestamp));
-  // 10 first characters (yyyy-mm-dd) are human readable, other is not
-  return dateObj.toISOString().slice(0, 10) + ' at ' +
-         (dateObj.getHours() < 10 ? '0' + dateObj.getHours() : dateObj.getHours()) + ':' +
-         (dateObj.getMinutes() < 10 ? '0' + dateObj.getMinutes() : dateObj.getMinutes()) + ':' +
-         (dateObj.getSeconds() < 10 ? '0' + dateObj.getSeconds() : dateObj.getSeconds());
 }
