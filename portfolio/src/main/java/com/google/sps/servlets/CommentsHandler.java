@@ -8,6 +8,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class CommentsHandler {
   public String saveComment(Comment comment) throws BadRequestException {
     Entity commentEntity = new Entity("Comment");
     try {
+      comment.timestamp = Long.toString(System.currentTimeMillis());
       // validate replyTo field if there is one
       if (comment.replyTo != null) {
         Key replyToKey = KeyFactory.stringToKey(comment.replyTo);
@@ -51,7 +53,7 @@ public class CommentsHandler {
 
   public String getComments() {
     Gson gson = new Gson();
-    Query query = new Query("Comment");
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
     PreparedQuery results = datastore.prepare(query);
     ArrayList<Comment> comments = new ArrayList<>();
     for (Entity entity : results.asIterable()) {
