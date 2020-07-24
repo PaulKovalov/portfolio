@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.repackaged.com.google.gson.JsonArray;
 import com.google.appengine.repackaged.com.google.gson.JsonElement;
@@ -21,11 +22,18 @@ import org.springframework.mock.web.MockHttpServletResponse;
 class CommentsServletTest {
   private final int BAD_REQUEST = 400;
   private final int OK = 200;
+  private final int REDIRECT = 302;
   private CommentsServlet servlet;
   private MockHttpServletRequest request;
   private MockHttpServletResponse response;
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+
+  // helper method that quotes the string
+  public String quoted(String unquoted) {
+    return "\"" + unquoted + "\"";
+  }
+
   @BeforeEach
   public void setUp() {
     servlet = new CommentsServlet();
@@ -42,11 +50,39 @@ class CommentsServletTest {
     request.addParameter("text", "A nice comment");
     try {
       servlet.doPost(request, response);
-      assertEquals(response.getStatus(), OK);
+      assertEquals(response.getStatus(), REDIRECT);
       String responseString = response.getContentAsString();
       JsonObject jsonObject = (new JsonParser()).parse(responseString).getAsJsonObject();
-      assertEquals(jsonObject.get("username").toString(), "\"Paul\"");
-      assertEquals(jsonObject.get("text").toString(), "\"A nice comment\"");
+      assertEquals(jsonObject.get("username").toString(), quoted("Paul"));
+      assertEquals(jsonObject.get("text").toString(), quoted("A nice comment"));
+    } catch (IOException ex) {
+      System.out.println(ex.getMessage());
+    }
+  }
+
+  @Test
+  public void testCreateWithValidPayloadAndValidReplyKey() {
+    // create a comment and put it to the datastore
+    DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+    Entity commentEntity = new Entity("Comment");
+    ds.put(commentEntity);
+    commentEntity.setProperty("username", "paul");
+    commentEntity.setProperty("text", "Very cool comment text");
+    request.setMethod("POST");
+    request.setContentType("text/html");
+    request.addParameter("username", "Paul");
+    request.addParameter("text", "A nice comment");
+    // add a valid reply to field
+    String replyToKey = KeyFactory.keyToString(commentEntity.getKey());
+    request.addParameter("replyTo", replyToKey);
+    try {
+      servlet.doPost(request, response);
+      assertEquals(response.getStatus(), REDIRECT);
+      String responseString = response.getContentAsString();
+      JsonObject jsonObject = (new JsonParser()).parse(responseString).getAsJsonObject();
+      assertEquals(jsonObject.get("username").toString(), quoted("Paul"));
+      assertEquals(jsonObject.get("text").toString(), quoted("A nice comment"));
+      assertEquals(jsonObject.get("replyTo").toString(), quoted(replyToKey));
     } catch (IOException ex) {
       System.out.println(ex.getMessage());
     }
@@ -94,6 +130,21 @@ class CommentsServletTest {
   }
 
   @Test
+  public void testCreateWithInvalidReplyKey() {
+    request.setMethod("POST");
+    request.addParameter("username", "Paul");
+    request.addParameter("text", "A nice comment");
+    // add reference to unexisting comment
+    request.addParameter("replyTo", "Unexisting key");
+    try {
+      servlet.doPost(request, response);
+      assertEquals(response.getStatus(), BAD_REQUEST);
+    } catch (IOException ex) {
+      System.out.println(ex.getMessage());
+    }
+  }
+
+  @Test
   public void testGetComments() {
     // insert comment entity to the datastore
     DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
@@ -110,8 +161,8 @@ class CommentsServletTest {
       JsonArray jsonArray = (new JsonParser()).parse(responseString).getAsJsonArray();
       for (JsonElement element : jsonArray) {
         JsonObject jsonObject = element.getAsJsonObject();
-        assertEquals(jsonObject.get("username").toString(), "\"paul\"");
-        assertEquals(jsonObject.get("text").toString(), "\"Very cool comment text\"");
+        assertEquals(jsonObject.get("username").toString(), quoted("paul"));
+        assertEquals(jsonObject.get("text").toString(), quoted("Very cool comment text"));
       }
     } catch (IOException ex) {
       System.out.println(ex.getMessage());

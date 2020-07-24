@@ -8,6 +8,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -41,17 +42,17 @@ public class CommentsHandler {
         }
       }
       datastore.put(commentEntity);
-      comment.key = commentEntity.getKey().toString();
+      comment.key = KeyFactory.keyToString(commentEntity.getKey());
       Gson gson = new Gson();
       return gson.toJson(new CommentRepresentationSerializer(comment));
-    } catch (IllegalAccessException ex) {
+    } catch (IllegalAccessException | IllegalArgumentException ex) {
       throw new BadRequestException("Invalid payload");
     }
   }
 
   public String getComments() {
     Gson gson = new Gson();
-    Query query = new Query("Comment");
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
     PreparedQuery results = datastore.prepare(query);
     ArrayList<Comment> comments = new ArrayList<>();
     for (Entity entity : results.asIterable()) {
@@ -61,7 +62,7 @@ public class CommentsHandler {
         for (Entry<String, Object> entry : properties.entrySet()) {
           Comment.class.getField(entry.getKey()).set(comment, entry.getValue().toString());
         }
-        comment.key = entity.getKey().toString();
+        comment.key = KeyFactory.keyToString(entity.getKey());
         comments.add(comment);
       } catch (IllegalAccessException | NoSuchFieldException ex) {
         System.out.println(ex.getMessage());
@@ -80,5 +81,13 @@ public class CommentsHandler {
       }
     }
     return gson.toJson(commentsMap.values());
+  }
+
+  public void deleteComments() {
+    Query query = new Query("Comment");
+    PreparedQuery results = datastore.prepare(query);
+    for (Entity entity : results.asIterable()) {
+      datastore.delete(entity.getKey());
+    }
   }
 }
