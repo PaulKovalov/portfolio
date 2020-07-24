@@ -23,5 +23,6 @@ public class Comment {
     this.text = other.text;
     this.replyTo = other.replyTo;
     this.key = other.key;
+    this.timestamp = other.timestamp;
   }
 }
