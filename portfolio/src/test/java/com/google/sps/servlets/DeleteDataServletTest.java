@@ -45,6 +45,7 @@ class DeleteDataServletTest {
     }
     try {
       servlet.doPost(request, response);
+      assertEquals(response.getStatus(), REDIRECT);
       assertEquals(0, ds.prepare(new Query("Comment")).countEntities());
     } catch(IOException ex) {
       System.out.println(ex.getMessage());
