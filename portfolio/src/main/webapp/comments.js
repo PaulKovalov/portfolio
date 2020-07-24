@@ -118,3 +118,13 @@ function toggleReplyField(commentId) {
     replyForm.classList.add('hidden');
   }
 }
+
+function addDeleteButton() {
+  const button = document.createElement('button');
+  button.innerText = 'Delete comments';
+  button.onclick = function () {
+    const request = new Request('/delete-data', {method: 'POST'});
+    fetch(request); // redirect is handled by server
+  };
+  document.getElementById('comments').appendChild(button);
+}
