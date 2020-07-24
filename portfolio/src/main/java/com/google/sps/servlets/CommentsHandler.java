@@ -82,4 +82,12 @@ public class CommentsHandler {
     }
     return gson.toJson(commentsMap.values());
   }
+
+  public void deleteComments() {
+    Query query = new Query("Comment");
+    PreparedQuery results = datastore.prepare(query);
+    for (Entity entity : results.asIterable()) {
+      datastore.delete(entity.getKey());
+    }
+  }
 }
