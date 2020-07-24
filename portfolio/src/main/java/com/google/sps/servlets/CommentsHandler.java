@@ -12,6 +12,7 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -85,5 +86,13 @@ public class CommentsHandler {
       }
     }
     return gson.toJson(commentsMap.values());
+  }
+
+  public void deleteComments() {
+    Query query = new Query("Comment");
+    PreparedQuery results = datastore.prepare(query);
+    for (Entity entity : results.asIterable()) {
+      datastore.delete(entity.getKey());
+    }
   }
 }
