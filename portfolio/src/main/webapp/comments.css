@@ -22,7 +22,7 @@
   display: block;
 }
 
-.comment button {
+.comments button {
   font-size: 12px;
   padding: 4px;
 }
@@ -32,4 +32,8 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+}
+
+.delete-comments-btn {
+  margin-top: 20px;
 }

@@ -9,16 +9,17 @@ async function fetchComments() {
     const comment = commentsJson[i];
     commentsMap[comment.key] = comment;
   }
-  if (commentsJson.length) {
-    // if there are some comments, remove label 'No comments yet'
-    document.getElementById('no-comments').remove();
-  }
   // build a tree, starting DFS from the vertex (comments) that have no incoming vertexes (are not replies)
   for (const i in commentsMap) {
     const comment = commentsMap[i];
     if (!comment.replyTo) {
       buildCommentsTree(commentsMap, comment, 0);
     }
+  }
+  if (commentsJson.length) {
+    // if there are some comments, remove label 'No comments yet'
+    addDeleteButton();
+    document.getElementById('no-comments').remove();
   }
 }
 
@@ -124,7 +125,10 @@ function addDeleteButton() {
   button.innerText = 'Delete comments';
   button.onclick = function () {
     const request = new Request('/delete-data', {method: 'POST'});
-    fetch(request); // redirect is handled by server
+    fetch(request).then(() => {
+      window.location.reload(false); 
+    });
   };
+  button.classList.add('delete-comments-btn');
   document.getElementById('comments').appendChild(button);
 }
