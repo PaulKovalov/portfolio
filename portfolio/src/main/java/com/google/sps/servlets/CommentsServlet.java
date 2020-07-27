@@ -29,13 +29,16 @@ public class CommentsServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     CommentsHandler commentsHandler = new CommentsHandler();
+    // retrieve comments from Datastore in JSON format
     String comments = commentsHandler.getComments();
     response.setContentType("application/json");
+    // use the response's writer to return comments list
     response.getWriter().println(comments);
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // get URL parameters from the request
     String username = request.getParameter("username");
     String text = request.getParameter("text");
     // if any of the necessary fields are absent, raise an error
@@ -54,7 +57,9 @@ public class CommentsServlet extends HttpServlet {
     }
     CommentsHandler commentsHandler = new CommentsHandler();
     try {
+      // when comment is saved, it is returned as a JSON string 
       String serializedComment = commentsHandler.saveComment(comment);
+      // use the response's writer to return the comment
       response.getWriter().println(serializedComment);
       response.sendRedirect("./index.html");
     } catch (BadRequestException ex) {

@@ -1,12 +1,14 @@
 package com.google.sps.servlets;
 
-// use it as a dataclass
+/**
+ * Data class for the comment object
+ */
 public class Comment {
   public String username;
   public String text;
   public String replyTo;
   public String key;
-  // TODO add timestamp here
+  public String timestamp;
 
   public Comment(String username, String text) {
     this.username = username;
