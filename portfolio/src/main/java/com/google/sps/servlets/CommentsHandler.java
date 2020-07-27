@@ -31,11 +31,13 @@ public class CommentsHandler {
       if (comment.replyTo != null) {
         Key replyToKey = KeyFactory.stringToKey(comment.replyTo);
         try {
+          // if comment's replyTo field points to an unexisting comment, throw an exception
           datastore.get(replyToKey);
         } catch (EntityNotFoundException ex) {
           throw new BadRequestException("field replyTo has invalid value");
         }
       }
+      // create datastore entity from the Comment object using reflection API
       for (Field field : Comment.class.getDeclaredFields()) {
         Object f = field.get(comment);
         if (f != null) {
@@ -45,6 +47,7 @@ public class CommentsHandler {
       datastore.put(commentEntity);
       comment.key = commentEntity.getKey().toString();
       Gson gson = new Gson();
+      // use comment serializer to build a JSON string from
       return gson.toJson(new CommentRepresentationSerializer(comment));
     } catch (IllegalAccessException ex) {
       throw new BadRequestException("Invalid payload");
@@ -58,6 +61,7 @@ public class CommentsHandler {
     ArrayList<Comment> comments = new ArrayList<>();
     for (Entity entity : results.asIterable()) {
       try {
+        // instantiate comment objects based on the datastore entities
         Map<String, Object> properties = entity.getProperties();
         Comment comment = new Comment();
         for (Entry<String, Object> entry : properties.entrySet()) {

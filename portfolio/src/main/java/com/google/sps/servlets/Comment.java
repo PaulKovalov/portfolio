@@ -1,6 +1,8 @@
 package com.google.sps.servlets;
 
-// use it as a dataclass
+/**
+ * Data class for the comment object
+ */
 public class Comment {
   public String username;
   public String text;
