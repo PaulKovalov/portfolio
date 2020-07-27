@@ -1,0 +1,39 @@
+.comments {
+  margin-bottom: 50px;
+}
+
+.comment {
+  margin-top: 10px;
+}
+
+.comment p {
+  margin: 0px;
+}
+
+.comment h5 {
+  margin: 0px 10px 0px 0px;
+}
+
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: block;
+}
+
+.comments button {
+  font-size: 12px;
+  padding: 4px;
+}
+
+.comment-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.delete-comments-btn {
+  margin-top: 20px;
+}

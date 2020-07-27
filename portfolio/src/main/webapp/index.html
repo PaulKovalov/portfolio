@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <title>Paul's Portfolio</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="comments.css">
     <script src="script.js"></script>
+    <script src="comments.js"></script>
+    <script src="utils.js"></script>
   </head>
   <body>
     <div id="content">
@@ -71,6 +74,18 @@
       <p><a href="https://www.linkedin.com/in/paul-kovalov/" target="_blank">Linkedin</a></p>
       <p><a href="https://www.strava.com/athletes/19512872" target="_blank">Strava</a> here you can check my rides</p>
       <p><a href="https://www.facebook.com/pavlo.kovalov.1/"  target="_blank">FB</a></p>
+      <h3>Comments</h3>
+      <div class="comments" id="comments">
+        <p id="no-comments">No comments yet</p>
+        <form action="/comments" method="POST" id="main-form">
+          <input type="text" name="username" placeholder="Your username">
+          <input type="text" name="text" placeholder="Write your comment here">
+          <input type="submit">
+        </form>
+        <script>
+          fetchComments();
+        </script>
+      </div>
       <button onclick="scrollUp()" class="up-btn">Up</button>
     </div>
   </body>
