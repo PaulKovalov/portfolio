@@ -35,10 +35,10 @@ function buildCommentsTree(commentsMap, comment, depth) {
 
 function addCommentToDOM(comment, depth) {
   // creates a div with two paragraph, one for username and one for comment text
-  const commentDOMElement = document.createElement('div');
-  commentDOMElement.classList.add('comment')
-  commentDOMElement.style = 'margin-left: ' + Math.sqrt(Number(depth * 100)) + 'px';
-  commentDOMElement.id = comment.key;
+  const commentDiv = document.createElement('div');
+  commentDiv.classList.add('comment')
+  commentDiv.style = 'margin-left: ' + Math.sqrt(Number(depth * 100)) + 'px';
+  commentDiv.id = comment.key;
   const commentText = document.createElement('p');
   commentText.innerText = comment.text;
   const showReplyFormButton = document.createElement('button');
@@ -51,12 +51,12 @@ function addCommentToDOM(comment, depth) {
   const replyForm = getCommentReplyForm(comment);
   const commentHeader = getCommentHeader(comment);
   // append everything to the comment div
-  commentDOMElement.appendChild(commentHeader);
-  commentDOMElement.appendChild(commentText);
-  commentDOMElement.appendChild(replyForm);
-  commentDOMElement.appendChild(showReplyFormButton);
+  commentDiv.appendChild(commentHeader);
+  commentDiv.appendChild(commentText);
+  commentDiv.appendChild(replyForm);
+  commentDiv.appendChild(showReplyFormButton);
   // attach created comment to the comments div
-  document.getElementById('comments').appendChild(commentDOMElement);
+  document.getElementById('comments').appendChild(commentDiv);
 }
 
 function getCommentHeader(comment) {
