@@ -83,7 +83,28 @@
           <input type="submit">
         </form>
         <script>
-          fetchComments();
+          fetchComments().then(() => {
+            // doing this in promise because I want to impact fetched comments' reply forms as well here
+
+            // every input field must have some value before submitted
+            // get all input elements
+            const inputElements = document.getElementsByTagName('input');
+            // for every input element add custom validator
+            for (let i in inputElements) {
+              const inputElement = inputElements[i];
+              if (inputElement.type === 'text') {
+                inputElement.addEventListener('input', function (event) {
+                  // if value is spaces or empty, set an error
+                  if (inputElement.value.trim().length === 0) {
+                    inputElement.setCustomValidity('Field has only spaces, please add some text instead');
+                  } else {
+                    // otherwise field is considered valid
+                    inputElement.setCustomValidity('');
+                  }
+                });
+              }
+            }
+          });
         </script>
       </div>
       <button onclick="scrollUp()" class="up-btn">Up</button>
