@@ -23,6 +23,7 @@ async function fetchComments() {
   }
 }
 
+// traverses the comments tree and calls 'addCommentToDom' with the correct offset
 function buildCommentsTree(commentsMap, comment, depth) {
   // add current comment to dom
   addCommentToDOM(comment, depth)
@@ -34,6 +35,8 @@ function buildCommentsTree(commentsMap, comment, depth) {
   }
 }
 
+// builds a DOM element from the given comment and puts the created DOM element
+// in the comments diff with the offset = sqrt(depth * 100)
 function addCommentToDOM(comment, depth) {
   // creates a div with two paragraph, one for username and one for comment text
   const commentDiv = document.createElement('div');
@@ -60,6 +63,8 @@ function addCommentToDOM(comment, depth) {
   document.getElementById('comments').appendChild(commentDiv);
 }
 
+// creates a comment header which includes the comment's author username
+// and date comment's creation date
 function getCommentHeader(comment) {
   const commentAuthorUsername = document.createElement('h5');
   commentAuthorUsername.innerText = comment.username;
@@ -73,6 +78,7 @@ function getCommentHeader(comment) {
   return commentHeader;
 }
 
+// creates a reply form as a DOM element for the given comment
 function getCommentReplyForm(comment) {
   // next I need a form for posting a reply to this comment
   const replyForm = document.createElement('form');
@@ -93,6 +99,10 @@ function getCommentReplyForm(comment) {
 function createFormInput(type, name, placeholder, value = null, hidden = false) {
   const input = document.createElement('input');
   input.type = type;
+  // if type of the input is 'text', then it must have value before submitted
+  if (input.type === 'text') {
+    input.required = true;
+  }
   input.name = name;
   input.placeholder = placeholder;
   if (value !== null) {
@@ -120,6 +130,7 @@ function toggleReplyField(commentId) {
   }
 }
 
+// adds a delete button which deletes all comments on the page
 function addDeleteButton() {
   const button = document.createElement('button');
   button.innerText = 'Delete comments';

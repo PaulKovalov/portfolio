@@ -78,28 +78,12 @@
       <div class="comments" id="comments">
         <p id="no-comments">No comments yet</p>
         <form action="/comments" method="POST" id="main-form">
-          <input type="text" name="username" placeholder="Your username">
-          <input type="text" name="text" placeholder="Write your comment here">
+          <input type="text" name="username" required placeholder="Your username">
+          <input type="text" name="text" required placeholder="Write your comment here">
           <input type="submit">
         </form>
         <script>
           fetchComments();
-          // every input field must have some value before submitted
-          // get all input elements
-          const inputElements = document.getElementsByTagName('input');
-          // for every input element add custom validator
-          for (let i in inputElements) {
-            const inputElement = inputElements[i];
-            inputElement.addEventListener('input', function (event) {
-              // if value is spaces or empty, set an error
-              if (inputElement.value.trim().length === 0) {
-                inputElement.setCustomValidity('Field can not be empty');
-              } else {
-                // otherwise field is considered valid
-                inputElement.setCustomValidity('');
-              }
-            });
-          }
         </script>
       </div>
       <button onclick="scrollUp()" class="up-btn">Up</button>
