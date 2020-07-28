@@ -1,12 +1,10 @@
 /* this file is a set of methods for fetching/creating comments */
 
-var authState = {};
-
 async function fetchComments() {
   const commentsResponse = await fetch('/comments');
   const commentsJson = await commentsResponse.json();
   const authResponse = await fetch('/auth');
-  authState = await authResponse.json();
+  const authState = await authResponse.json();
   // create a hash table of type "comment id" -> "comment" to build a comment tree
   const commentsMap = {};
   for (const i in commentsJson) {
@@ -20,35 +18,37 @@ async function fetchComments() {
       buildCommentsTree(commentsMap, comment, 0);
     }
   }
-  if (commentsJson.length) {
-    // if there are some comments, add button to delete all of them
-    addDeleteButton();
-  } else {
+  if (!commentsJson.length) {
     // if there are no comments, add tag 'no comments'
     createNoCommentsTag();
   }
   // if client is authenticated, add new comment form
   if (authState.authenticated) {
     createNewCommentForm();
+    if (commentsJson.length) {
+      // if there are some comments, add button to delete all of them
+      // only authenticated user can delete comments (maybe will change later to administrator only feature)
+      addDeleteButton();
+    }
   }
-  addActionButtonsBasedOnAuthState();
+  addActionButtonsBasedOnAuthState(authState);
 }
 
 // traverses the comments tree and calls 'addCommentToDom' with the correct offset
-function buildCommentsTree(commentsMap, comment, depth) {
+function buildCommentsTree(commentsMap, comment, depth, authState) {
   // add current comment to dom
-  addCommentToDOM(comment, depth)
+  addCommentToDOM(comment, depth, authState)
   // iterate over all replies in the map, add them as the children of the current comment
   for (const i in comment.replies) {
     const replyId = comment.replies[i];
     const reply = commentsMap[replyId]
-    buildCommentsTree(commentsMap, reply, Number(depth + 1));
+    buildCommentsTree(commentsMap, reply, Number(depth + 1), authState);
   }
 }
 
 // builds a DOM element from the given comment and puts the created DOM element
 // in the comments diff with the offset = sqrt(depth * 100)
-function addCommentToDOM(comment, depth) {
+function addCommentToDOM(comment, depth, authState) {
   // creates a div with two paragraph, one for username and one for comment text
   const commentDiv = document.createElement('div');
   commentDiv.classList.add('comment')
@@ -61,7 +61,7 @@ function addCommentToDOM(comment, depth) {
   showReplyFormButton.id = comment.key + '_button'; // this button must have unique id as I will change it's text
                                                     // depending on form state
   showReplyFormButton.onclick = function() {
-    toggleReplyField(comment.key);
+    toggleReplyField(comment.key, authState);
   };
   const replyForm = getCommentReplyForm(comment);
   const commentHeader = getCommentHeader(comment);
@@ -132,7 +132,7 @@ function createFormInput(type, name, placeholder, value = null, hidden = false) 
 }
 
 // toggles visibility of the reply form
-function toggleReplyField(commentId) {
+function toggleReplyField(commentId, authState) {
   if (authState.authenticated === false) {
     alert('Log in before writing comments');
     return;
@@ -169,7 +169,7 @@ function addDeleteButton() {
 
 // either adds log in button, or log out button. if user is
 // authenticated, displays user's email in DOM
-function addActionButtonsBasedOnAuthState() {
+function addActionButtonsBasedOnAuthState(authState) {
   const authDiv = document.getElementById('auth');
   if (authState.authenticated === true) {
     const logOutLink = document.createElement('a');
