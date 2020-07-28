@@ -26,6 +26,7 @@ public class CommentsHandler {
   public String saveComment(Comment comment) throws BadRequestException {
     Entity commentEntity = new Entity("Comment");
     try {
+      comment.timestamp = Long.toString(System.currentTimeMillis());
       // validate replyTo field if there is one
       if (comment.replyTo != null) {
         Key replyToKey = KeyFactory.stringToKey(comment.replyTo);
