@@ -14,6 +14,8 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -39,10 +41,10 @@ public class CommentsServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // get URL parameters from the request
-    String username = request.getParameter("username");
     String text = request.getParameter("text");
     String replyTo = request.getParameter("replyTo"); // this one is optional
-    Comment comment = new Comment(username, text);
+    // Get currently logged in user from Users API (for now username == email)
+    Comment comment = new Comment(getUserNickname(), text);
     if (replyTo != null) {
       comment.replyTo = replyTo;
     }
@@ -56,5 +58,11 @@ public class CommentsServlet extends HttpServlet {
     } catch (BadRequestException ex) {
       response.sendError(BAD_REQUEST, ex.getMessage());
     }
+  }
+  // returns current user's nickname
+  public String getUserNickname() {
+    UserService userService = UserServiceFactory.getUserService();
+    // for now email == username, later I will change it so username will be stored in the datastore
+    return userService.getCurrentUser().getEmail();
   }
 }
