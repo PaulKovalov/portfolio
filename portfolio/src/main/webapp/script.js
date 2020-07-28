@@ -70,3 +70,24 @@ function toggleTheme() {
 function scrollUp() {
   window.scrollTo({top : 0, behavior : "smooth"});
 }
+
+// this function checks if client is authenticated by making a GET request
+// to the backend's /auth endpoint. It updates page accrodingly:
+// adds either login or logout link
+async function updatePageBasedOnAuthenticationStatus() {
+  const response = await fetch('/auth');
+  const responseJson = await response.json();
+  const authDiv = document.getElementById('auth');
+  if (responseJson.authenticated === true) {
+    const logOutLink = document.createElement('a');
+    const userEmailElement = document.createElement('p');
+    userEmailElement.innerText = 'Hello, ' + responseJson.email;
+    logOutLink.href = responseJson.logoutUrl;
+    authDiv.appendChild(userEmailElement);
+    authDiv.appendChild(logOutLink);
+  } else {
+    const logInLink = document.createElement('a');
+    logInLink.href = responseJson.loginUrl;
+    authDiv.appendChild(logInLink);
+  }
+}
