@@ -1,3 +1,8 @@
+/**
+ * File provides AuthenticationServlet class, which utilizes Google Users API
+ * to manage Paul's portfolio users' authentication
+ */
+
 package com.google.sps.servlets;
 
 import com.google.appengine.api.users.UserService;

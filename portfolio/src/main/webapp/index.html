@@ -77,11 +77,8 @@
       <h3>Comments</h3>
       <div class="comments" id="comments">
         <div id="auth"></div>
-        <p id="no-comments">No comments yet</p>
-        <form action="/comments" method="POST" id="add-comment-form">
-          <input type="text" name="text" placeholder="Write your comment here">
-          <input type="submit">
-        </form>
+        <div id="no-comments-div"></div> <!-- I need this to properly position the 'No comments yet' label -->
+        <div id="form-add-comment-div"></div> <!-- I need this to properly position the new comment form -->
         <script>
           fetchComments();
         </script>

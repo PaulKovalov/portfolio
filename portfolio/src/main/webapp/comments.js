@@ -21,12 +21,16 @@ async function fetchComments() {
     }
   }
   if (commentsJson.length) {
-    // if there are some comments, remove label 'No comments yet'
+    // if there are some comments, add button to delete all of them
     addDeleteButton();
-    document.getElementById('no-comments').remove();
+  } else {
+    // if there are no comments, add tag 'no comments'
+    createNoCommentsTag();
   }
-  // update page
-  updateReplyFromAccessBasedOnAuthState();
+  // if client is authenticated, add new comment form
+  if (authState.authenticated) {
+    createNewCommentForm();
+  }
   addActionButtonsBasedOnAuthState();
 }
 
@@ -92,7 +96,6 @@ function getCommentReplyForm(comment) {
   replyForm.action = '/comments';
   replyForm.method = 'POST';
   // create form elements
-  replyForm.appendChild(createFormInput('text', 'username', 'Your username'));
   replyForm.appendChild(createFormInput('text', 'text', 'Write reply here'));
   // this element is invisible but it holds the replyTo id
   replyForm.appendChild(createFormInput('text', 'replyTo', '', comment.key, true));
@@ -109,13 +112,13 @@ function createFormInput(type, name, placeholder, value = null, hidden = false) 
   // if type of the input is 'text', then it must have value before submitted
   if (input.type === 'text') {
     input.required = true;
-    input.addEventListener('input', function (event) {
+    input.addEventListener('input', function(event) {
       // if value is spaces or empty, set an error
-      if (inputElement.value.trim().length === 0) {
-        inputElement.setCustomValidity('Field has only spaces, please add some text instead');
+      if (input.value.trim().length === 0) {
+        input.setCustomValidity('Field has only spaces, please add some text instead');
       } else {
         // otherwise field is considered valid
-        inputElement.setCustomValidity('');
+        input.setCustomValidity('');
       }
     });
   }
@@ -154,10 +157,10 @@ function toggleReplyField(commentId) {
 function addDeleteButton() {
   const button = document.createElement('button');
   button.innerText = 'Delete comments';
-  button.onclick = function () {
-    const request = new Request('/delete-data', {method: 'POST'});
+  button.onclick = function() {
+    const request = new Request('/delete-data', {method : 'POST'});
     fetch(request).then(() => {
-      window.location.reload(false); 
+      window.location.reload(false);
     });
   };
   button.classList.add('delete-comments-btn');
@@ -187,10 +190,20 @@ function addActionButtonsBasedOnAuthState() {
   }
 }
 
-// hides the reply form in case user is not authenticated
-function updateReplyFromAccessBasedOnAuthState() {
-  if (authState.authenticated === false) {
-    const addCommentForm = document.getElementById('add-comment-form');
-    addCommentForm.classList.add('hidden');
-  }
+// creates form for adding new comments
+function createNewCommentForm() {
+  const formElement = document.createElement('form');
+  formElement.method = 'POST';
+  formElement.action = '/comments';
+  formElement.id = 'add-comment-form';
+  formElement.appendChild(createFormInput('text', 'text', 'Write your comment here'));
+  formElement.appendChild(createFormInput('submit', '', ''));
+  document.getElementById('form-add-comment-div').appendChild(formElement);
+}
+
+// creates tag 'No comments yet' and adds it to DOM
+function createNoCommentsTag() {
+  const noCommentsTag = document.createElement('p');
+  noCommentsTag.innerText = 'No comments yet';
+  document.getElementById('comments').appendChild(noCommentsTag);
 }
