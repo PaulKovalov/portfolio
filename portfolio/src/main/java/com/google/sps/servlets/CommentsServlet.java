@@ -41,15 +41,6 @@ public class CommentsServlet extends HttpServlet {
     // get URL parameters from the request
     String username = request.getParameter("username");
     String text = request.getParameter("text");
-    // if any of the necessary fields are absent, raise an error
-    if (username == null) {
-      response.sendError(BAD_REQUEST, "Username must not be empty");
-      return;
-    }
-    if (text == null || text.trim().length() == 0) {
-      response.sendError(BAD_REQUEST, "Text must not be empty");
-      return;
-    }
     String replyTo = request.getParameter("replyTo"); // this one is optional
     Comment comment = new Comment(username, text);
     if (replyTo != null) {

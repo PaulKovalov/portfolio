@@ -89,47 +89,6 @@ class CommentsServletTest {
   }
 
   @Test
-  public void testCreateCommentFailsWithNoPayload() {
-    request.setMethod("POST");
-    request.setContentType("text/html");
-    try {
-      servlet.doPost(request, response);
-      assertEquals(response.getStatus(), BAD_REQUEST);
-    } catch (IOException ex) {
-      System.out.println(ex.getMessage());
-    }
-  }
-
-  @Test
-  public void testCreateCommentFailsWithAbsentCommentText() {
-    request.setMethod("POST");
-    request.setContentType("text/html");
-    // set the username only, without the text
-    request.addParameter("username", "Paul");
-    try {
-      servlet.doPost(request, response);
-      assertEquals(response.getStatus(), BAD_REQUEST);
-    } catch (IOException ex) {
-      System.out.println(ex.getMessage());
-    }
-  }
-
-  @Test
-  public void testCreateCommentFailsWithInvalidCommentTextValue() {
-    request.setMethod("POST");
-    request.setContentType("text/html");
-    request.addParameter("username", "Paul");
-    // set the username and text full of spaces
-    request.addParameter("text", "        ");
-    try {
-      servlet.doPost(request, response);
-      assertEquals(response.getStatus(), BAD_REQUEST);
-    } catch (IOException ex) {
-      System.out.println(ex.getMessage());
-    }
-  }
-
-  @Test
   public void testCreateCommentFailsWithInvalidReplyKey() {
     request.setMethod("POST");
     request.addParameter("username", "Paul");
