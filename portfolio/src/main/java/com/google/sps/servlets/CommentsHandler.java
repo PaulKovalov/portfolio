@@ -45,11 +45,11 @@ public class CommentsHandler {
         }
       }
       datastore.put(commentEntity);
-      comment.key = commentEntity.getKey().toString();
+      comment.key = KeyFactory.keyToString(commentEntity.getKey());
       Gson gson = new Gson();
       // use comment serializer to build a JSON string from
       return gson.toJson(new CommentRepresentationSerializer(comment));
-    } catch (IllegalAccessException ex) {
+    } catch (IllegalAccessException | IllegalArgumentException ex) {
       throw new BadRequestException("Invalid payload");
     }
   }
@@ -67,7 +67,7 @@ public class CommentsHandler {
         for (Entry<String, Object> entry : properties.entrySet()) {
           Comment.class.getField(entry.getKey()).set(comment, entry.getValue().toString());
         }
-        comment.key = entity.getKey().toString();
+        comment.key = KeyFactory.keyToString(entity.getKey());
         comments.add(comment);
       } catch (IllegalAccessException | NoSuchFieldException ex) {
         System.out.println(ex.getMessage());
@@ -86,5 +86,13 @@ public class CommentsHandler {
       }
     }
     return gson.toJson(commentsMap.values());
+  }
+
+  public void deleteComments() {
+    Query query = new Query("Comment");
+    PreparedQuery results = datastore.prepare(query);
+    for (Entity entity : results.asIterable()) {
+      datastore.delete(entity.getKey());
+    }
   }
 }

@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/comments")
 public class CommentsServlet extends HttpServlet {
+  private final int BAD_REQUEST = 400;
   /**
    * Returns the list of all comments
    */
@@ -51,8 +52,9 @@ public class CommentsServlet extends HttpServlet {
       String serializedComment = commentsHandler.saveComment(comment);
       // use the response's writer to return the comment
       response.getWriter().println(serializedComment);
+      response.sendRedirect("./index.html");
     } catch (BadRequestException ex) {
-      response.sendError(400, ex.getMessage());
+      response.sendError(BAD_REQUEST, ex.getMessage());
     }
   }
 }
