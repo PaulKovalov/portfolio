@@ -44,8 +44,6 @@ class CommentsServletTest {
 
   @Test
   public void testCreateWithValidPayload() {
-    Gson gson = new Gson();
-    Comment comment = new Comment();
     request.setMethod("POST");
     request.setContentType("text/html");
     request.addParameter("username", "Paul");
@@ -93,8 +91,7 @@ class CommentsServletTest {
   @Test
   public void testCreateWithNoPayload() {
     request.setMethod("POST");
-    request.setContentType("application/json");
-    request.setContent(jsonRequest.getBytes());
+    request.setContentType("text/html");
     try {
       servlet.doPost(request, response);
       assertEquals(response.getStatus(), BAD_REQUEST);
@@ -108,11 +105,7 @@ class CommentsServletTest {
     request.setMethod("POST");
     request.setContentType("text/html");
     // set the username only, without the text
-    comment.username = "Paul";
-    String jsonRequest = gson.toJson(comment);
-    request.setMethod("POST");
-    request.setContentType("application/json");
-    request.setContent(jsonRequest.getBytes());
+    request.addParameter("username", "Paul");
     try {
       servlet.doPost(request, response);
       assertEquals(response.getStatus(), BAD_REQUEST);
@@ -124,9 +117,24 @@ class CommentsServletTest {
   @Test
   public void testCreateWithInvalidCommentTextValue() {
     request.setMethod("POST");
+    request.setContentType("text/html");
+    request.addParameter("username", "Paul");
+    // set the username and text full of spaces
+    request.addParameter("text", "        ");
+    try {
+      servlet.doPost(request, response);
+      assertEquals(response.getStatus(), BAD_REQUEST);
+    } catch (IOException ex) {
+      System.out.println(ex.getMessage());
+    }
+  }
+
+  @Test
+  public void testCreateWithInvalidReplyKey() {
+    request.setMethod("POST");
     request.addParameter("username", "Paul");
     request.addParameter("text", "A nice comment");
-    // add reference to nuexisting comment
+    // add reference to unexisting comment
     request.addParameter("replyTo", "Unexisting key");
     try {
       servlet.doPost(request, response);
