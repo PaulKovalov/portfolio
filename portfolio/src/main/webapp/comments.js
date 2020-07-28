@@ -1,8 +1,12 @@
 /* this file is a set of methods for fetching/creating comments */
 
+var authState = {};
+
 async function fetchComments() {
-  const response = await fetch('/comments');
-  const commentsJson = await response.json();
+  const commentsResponse = await fetch('/comments');
+  const commentsJson = await commentsResponse.json();
+  const authResponse = await fetch('/auth');
+  authState = await authResponse.json();
   // create a hash table of type "comment id" -> "comment" to build a comment tree
   const commentsMap = {};
   for (const i in commentsJson) {
@@ -21,6 +25,9 @@ async function fetchComments() {
     addDeleteButton();
     document.getElementById('no-comments').remove();
   }
+  // update page
+  updateReplyFromAccessBasedOnAuthState();
+  addActionButtonsBasedOnAuthState();
 }
 
 function buildCommentsTree(commentsMap, comment, depth) {
@@ -104,6 +111,10 @@ function createFormInput(type, name, placeholder, value = null, hidden = false) 
 
 // toggles visibility of the reply form
 function toggleReplyField(commentId) {
+  if (authState.authenticated === false) {
+    alert('Log in before writing comments');
+    return;
+  }
   const showReplyFormButtonId = commentId + '_button'; // generate button's id
   const replyFormId = commentId + '_form';             // generate reply form id
   const button = document.getElementById(showReplyFormButtonId);
@@ -131,4 +142,35 @@ function addDeleteButton() {
   };
   button.classList.add('delete-comments-btn');
   document.getElementById('comments').appendChild(button);
+}
+
+// either adds log in button, or log out button. if user is
+// authenticated, displays user's email in DOM
+function addActionButtonsBasedOnAuthState() {
+  const authDiv = document.getElementById('auth');
+  if (authState.authenticated === true) {
+    const logOutLink = document.createElement('a');
+    const userEmailElement = document.createElement('p');
+    userEmailElement.innerText = 'Hello, ' + authState.email + ' !';
+    logOutLink.href = authState.logoutUrl;
+    logOutLink.innerText = 'Log out';
+    authDiv.appendChild(userEmailElement);
+    authDiv.appendChild(logOutLink);
+  } else {
+    const infoText = document.createElement('p');
+    infoText.innerText = 'Log in to leave a comment';
+    const logInLink = document.createElement('a');
+    logInLink.href = authState.loginUrl;
+    logInLink.innerText = 'Log in';
+    authDiv.appendChild(infoText);
+    authDiv.appendChild(logInLink);
+  }
+}
+
+// hides the reply form in case user is not authenticated
+function updateReplyFromAccessBasedOnAuthState() {
+  if (authState.authenticated === false) {
+    const addCommentForm = document.getElementById('add-comment-form');
+    addCommentForm.classList.add('hidden');
+  }
 }

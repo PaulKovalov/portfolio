@@ -69,7 +69,7 @@
             <button onclick="updateDisplayedImage(Number(currentImageId()) + 1)" id="btn-next">&#10095;</button>
           </div>
         </div>
-      </div>
+      </div>updatePage
       <h3>Me on social networks</h3>
       <p><a href="https://www.linkedin.com/in/paul-kovalov/" target="_blank">Linkedin</a></p>
       <p><a href="https://www.strava.com/athletes/19512872" target="_blank">Strava</a> here you can check my rides</p>
@@ -78,8 +78,7 @@
       <div class="comments" id="comments">
         <div id="auth"></div>
         <p id="no-comments">No comments yet</p>
-        <form action="/comments" method="POST" id="main-form">
-          <input type="text" name="username" placeholder="Your username">
+        <form action="/comments" method="POST" id="add-comment-form">
           <input type="text" name="text" placeholder="Write your comment here">
           <input type="submit">
         </form>
