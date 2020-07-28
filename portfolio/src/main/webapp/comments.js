@@ -102,6 +102,15 @@ function createFormInput(type, name, placeholder, value = null, hidden = false) 
   // if type of the input is 'text', then it must have value before submitted
   if (input.type === 'text') {
     input.required = true;
+    input.addEventListener('input', function (event) {
+      // if value is spaces or empty, set an error
+      if (inputElement.value.trim().length === 0) {
+        inputElement.setCustomValidity('Field has only spaces, please add some text instead');
+      } else {
+        // otherwise field is considered valid
+        inputElement.setCustomValidity('');
+      }
+    });
   }
   input.name = name;
   input.placeholder = placeholder;
