@@ -15,7 +15,7 @@ async function fetchComments() {
   for (const i in commentsMap) {
     const comment = commentsMap[i];
     if (!comment.replyTo) {
-      buildCommentsTree(commentsMap, comment, 0);
+      buildCommentsTree(commentsMap, comment, 0, authState);
     }
   }
   if (!commentsJson.length) {
