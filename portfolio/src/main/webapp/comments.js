@@ -172,21 +172,15 @@ function addDeleteButton() {
 function addActionButtonsBasedOnAuthState(authState) {
   const authDiv = document.getElementById('auth');
   if (authState.authenticated === true) {
-    const logOutLink = document.createElement('a');
     const userEmailElement = document.createElement('p');
     userEmailElement.innerText = 'Hello, ' + authState.email + ' !';
-    logOutLink.href = authState.logoutUrl;
-    logOutLink.innerText = 'Log out';
     authDiv.appendChild(userEmailElement);
-    authDiv.appendChild(logOutLink);
+    authDiv.appendChild(createLinkButton('Log out', authState.logoutUrl));
   } else {
     const infoText = document.createElement('p');
     infoText.innerText = 'Log in to leave a comment';
-    const logInLink = document.createElement('a');
-    logInLink.href = authState.loginUrl;
-    logInLink.innerText = 'Log in';
     authDiv.appendChild(infoText);
-    authDiv.appendChild(logInLink);
+    authDiv.appendChild(createLinkButton('Log in', authState.loginUrl));
   }
 }
 
@@ -206,4 +200,14 @@ function createNoCommentsTag() {
   const noCommentsTag = document.createElement('p');
   noCommentsTag.innerText = 'No comments yet';
   document.getElementById('comments').appendChild(noCommentsTag);
+}
+
+// creates a button that acts like a link
+function createLinkButton(text, link) {
+  const button = document.createElement('button');
+  button.innerText = text;
+  button.onclick = function() {
+    window.location.href = link;
+  }
+  return button;
 }
