@@ -25,6 +25,7 @@
 .comments button {
   font-size: 12px;
   padding: 4px;
+  margin-right: 10px;
 }
 
 .comment-header {

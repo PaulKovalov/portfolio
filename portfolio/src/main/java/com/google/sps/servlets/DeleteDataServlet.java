@@ -11,7 +11,9 @@ public class DeleteDataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     CommentsHandler commentsHandler = new CommentsHandler();
-    commentsHandler.deleteComments();
+    // get the key of comment that has to be deleted
+    String commentKey = request.getParameter("commentKey");
+    commentsHandler.deleteComment(commentKey);
     response.sendRedirect("./index.html");
   }
 }

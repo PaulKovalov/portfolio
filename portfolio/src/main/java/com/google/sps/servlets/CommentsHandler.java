@@ -88,11 +88,34 @@ public class CommentsHandler {
     return gson.toJson(commentsMap.values());
   }
 
-  public void deleteComments() {
+  // deletes the comment with the given key
+  // deletes all child comments
+  public void deleteComment(String key) {
+    // Technically if there are replies to this comment I can delete the whole comments thread, I don't know
+    // what is better - to delete them all or to change parent comment to dummy one with "deleted" text
+    // Here I am implementing the first one
+    Map<Key, Entity> commentsMap = new HashMap<>();
     Query query = new Query("Comment");
     PreparedQuery results = datastore.prepare(query);
-    for (Entity entity : results.asIterable()) {
-      datastore.delete(entity.getKey());
+    for (Entity entity: results.asIterable()) {
+      commentsMap.put(entity.getKey(), entity);
+    }
+    deleteThread(KeyFactory.stringToKey(key), commentsMap);
+  }
+  
+  // deletes current comment and recursively calls itself to delete all
+  // child comments
+  private void deleteThread(Key current, Map<Key, Entity> commentsMap) {
+    datastore.delete(current);
+    // this can be done faster, presumably in O(thread length) if I store reversed reply keys in the datastore,
+    // then I will only need to run the DFS over the thread. I'm doing this slow version which runs in O(N* thread length)
+    // because it is faster to implement, better approach needs way more time
+    for (Entry<Key, Entity> entry : commentsMap.entrySet()) {
+      Object replyToValue = entry.getValue().getProperty("replyTo");
+      if (replyToValue != null && replyToValue.equals(KeyFactory.keyToString(current))) {
+        // this comment is a child of current, call delete for it
+        deleteThread(entry.getKey(), commentsMap);
+      }
     }
   }
 }
