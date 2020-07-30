@@ -12,6 +12,7 @@ import com.google.appengine.repackaged.com.google.gson.JsonElement;
 import com.google.appengine.repackaged.com.google.gson.JsonObject;
 import com.google.appengine.repackaged.com.google.gson.JsonParser;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,8 +28,8 @@ class CommentsServletTest {
   private MockHttpServletRequest request;
   private MockHttpServletResponse response;
   private final LocalServiceTestHelper helper =
-      new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
-
+      new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig(), new LocalUserServiceTestConfig());
+  private String testEmail = "test@example.com";
   // helper method that quotes the string
   public String quoted(String unquoted) {
     return "\"" + unquoted + "\"";
@@ -40,20 +41,23 @@ class CommentsServletTest {
     request = new MockHttpServletRequest();
     response = new MockHttpServletResponse();
     helper.setUp();
+    // this is required to mock UserService
+    helper.setEnvIsLoggedIn(true);
+    helper.setEnvEmail(testEmail);
+    helper.setEnvAuthDomain("envAuthDomain");
   }
 
   @Test
   public void testCreateCommentSuccessWithValidPayload() {
     request.setMethod("POST");
     request.setContentType("text/html");
-    request.addParameter("username", "Paul");
     request.addParameter("text", "A nice comment");
     try {
       servlet.doPost(request, response);
       assertEquals(response.getStatus(), REDIRECT);
       String responseString = response.getContentAsString();
       JsonObject jsonObject = (new JsonParser()).parse(responseString).getAsJsonObject();
-      assertEquals(jsonObject.get("username").toString(), quoted("Paul"));
+      assertEquals(jsonObject.get("username").toString(), quoted(testEmail));
       assertEquals(jsonObject.get("text").toString(), quoted("A nice comment"));
     } catch (IOException ex) {
       System.out.println(ex.getMessage());
@@ -70,7 +74,6 @@ class CommentsServletTest {
     commentEntity.setProperty("text", "Very cool comment text");
     request.setMethod("POST");
     request.setContentType("text/html");
-    request.addParameter("username", "Paul");
     request.addParameter("text", "A nice comment");
     // add a valid reply to field
     String replyToKey = KeyFactory.keyToString(commentEntity.getKey());
@@ -80,7 +83,7 @@ class CommentsServletTest {
       assertEquals(response.getStatus(), REDIRECT);
       String responseString = response.getContentAsString();
       JsonObject jsonObject = (new JsonParser()).parse(responseString).getAsJsonObject();
-      assertEquals(jsonObject.get("username").toString(), quoted("Paul"));
+      assertEquals(jsonObject.get("username").toString(), quoted(testEmail));
       assertEquals(jsonObject.get("text").toString(), quoted("A nice comment"));
       assertEquals(jsonObject.get("replyTo").toString(), quoted(replyToKey));
     } catch (IOException ex) {
@@ -91,7 +94,6 @@ class CommentsServletTest {
   @Test
   public void testCreateCommentFailsWithInvalidReplyKey() {
     request.setMethod("POST");
-    request.addParameter("username", "Paul");
     request.addParameter("text", "A nice comment");
     // add reference to unexisting comment
     request.addParameter("replyTo", "Unexisting key");

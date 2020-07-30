@@ -25,6 +25,7 @@
 .comments button {
   font-size: 12px;
   padding: 4px;
+  margin-right: 10px;
 }
 
 .comment-header {
@@ -36,4 +37,14 @@
 
 .delete-comments-btn {
   margin-top: 20px;
+}
+
+#auth {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#auth button {
+  margin-left: 20px;
 }
