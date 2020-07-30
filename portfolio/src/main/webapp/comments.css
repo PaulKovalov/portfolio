@@ -25,6 +25,7 @@
 .comments button {
   font-size: 12px;
   padding: 4px;
+  margin-right: 10px;
 }
 
 .comment-header {
@@ -44,6 +45,6 @@
   align-items: center;
 }
 
-#auth a {
+#auth button {
   margin-left: 20px;
 }

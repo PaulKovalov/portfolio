@@ -25,11 +25,6 @@ async function fetchComments() {
   // if client is authenticated, add new comment form
   if (authState.authenticated) {
     createNewCommentForm();
-    if (commentsJson.length) {
-      // if there are some comments, add button to delete all of them
-      // only authenticated user can delete comments (maybe will change later to administrator only feature)
-      addDeleteButton();
-    }
   }
   addActionButtonsBasedOnAuthState(authState);
 }
@@ -55,21 +50,19 @@ function addCommentToDOM(comment, depth, authState) {
   commentDiv.style = 'margin-left: ' + Math.sqrt(Number(depth * 100)) + 'px';
   commentDiv.id = comment.key;
   const commentText = document.createElement('p');
-  commentText.innerText = comment.text;
-  const showReplyFormButton = document.createElement('button');
-  showReplyFormButton.innerText = 'Reply';
-  showReplyFormButton.id = comment.key + '_button'; // this button must have unique id as I will change it's text
-                                                    // depending on form state
-  showReplyFormButton.onclick = function() {
-    toggleReplyField(comment.key, authState);
-  };
-  const replyForm = getCommentReplyForm(comment);
-  const commentHeader = getCommentHeader(comment);
+  commentText.innerText = comment.text; 
   // append everything to the comment div
-  commentDiv.appendChild(commentHeader);
+  commentDiv.appendChild(getCommentHeader(comment));
   commentDiv.appendChild(commentText);
-  commentDiv.appendChild(replyForm);
-  commentDiv.appendChild(showReplyFormButton);
+  if (authState.authenticated === true) {
+    // if the user is authenticated then allow replies
+    commentDiv.appendChild(getCommentReplyForm(comment));
+    commentDiv.appendChild(createShowReplyFormButton(comment));
+    if (comment.username === authState.username) {
+      // if the user is authenticated && they are author of the comment => they can delete their comments
+      commentDiv.appendChild(createDeleteButton(comment));
+    }
+  }
   // attach created comment to the comments div
   document.getElementById('comments').appendChild(commentDiv);
 }
@@ -132,11 +125,7 @@ function createFormInput(type, name, placeholder, value = null, hidden = false) 
 }
 
 // toggles visibility of the reply form
-function toggleReplyField(commentId, authState) {
-  if (authState.authenticated === false) {
-    alert('Log in before writing comments');
-    return;
-  }
+function toggleReplyField(commentId) {
   const showReplyFormButtonId = commentId + '_button'; // generate button's id
   const replyFormId = commentId + '_form';             // generate reply form id
   const button = document.getElementById(showReplyFormButtonId);
@@ -153,40 +142,20 @@ function toggleReplyField(commentId, authState) {
   }
 }
 
-// adds a delete button which deletes all comments on the page
-function addDeleteButton() {
-  const button = document.createElement('button');
-  button.innerText = 'Delete comments';
-  button.onclick = function() {
-    const request = new Request('/delete-data', {method : 'POST'});
-    fetch(request).then(() => {
-      window.location.reload(false);
-    });
-  };
-  button.classList.add('delete-comments-btn');
-  document.getElementById('comments').appendChild(button);
-}
-
 // either adds log in button, or log out button. if user is
 // authenticated, displays user's email in DOM
 function addActionButtonsBasedOnAuthState(authState) {
   const authDiv = document.getElementById('auth');
   if (authState.authenticated === true) {
-    const logOutLink = document.createElement('a');
     const userEmailElement = document.createElement('p');
-    userEmailElement.innerText = 'Hello, ' + authState.email + ' !';
-    logOutLink.href = authState.logoutUrl;
-    logOutLink.innerText = 'Log out';
+    userEmailElement.innerText = 'Hello, ' + authState.username + ' !';
     authDiv.appendChild(userEmailElement);
-    authDiv.appendChild(logOutLink);
+    authDiv.appendChild(createLinkButton('Log out', authState.logoutUrl));
   } else {
     const infoText = document.createElement('p');
     infoText.innerText = 'Log in to leave a comment';
-    const logInLink = document.createElement('a');
-    logInLink.href = authState.loginUrl;
-    logInLink.innerText = 'Log in';
     authDiv.appendChild(infoText);
-    authDiv.appendChild(logInLink);
+    authDiv.appendChild(createLinkButton('Log in', authState.loginUrl));
   }
 }
 
@@ -206,4 +175,38 @@ function createNoCommentsTag() {
   const noCommentsTag = document.createElement('p');
   noCommentsTag.innerText = 'No comments yet';
   document.getElementById('comments').appendChild(noCommentsTag);
+}
+
+// creates a button that acts like a link
+function createLinkButton(text, link) {
+  const button = document.createElement('button');
+  button.innerText = text;
+  button.onclick = function() {
+    window.location.href = link;
+  }
+  return button;
+}
+
+// creates a button that will delete given comment on click
+function createDeleteButton(comment) {
+  const deleteButton = document.createElement('button');
+  deleteButton.innerText = 'Delete';
+  deleteButton.onclick = function() {
+    const request = new Request('/delete-data?commentKey='+comment.key, {method : 'POST',});
+    fetch(request).then(() => {
+      window.location.reload(false);
+    })
+  }
+  return deleteButton;
+}
+
+function createShowReplyFormButton(comment) {
+  const showReplyFormButton = document.createElement('button');
+  showReplyFormButton.innerText = 'Reply';
+  showReplyFormButton.id = comment.key + '_button'; // this button must have unique id as I will change it's text
+                                                    // depending on form state
+  showReplyFormButton.onclick = function() {
+    toggleReplyField(comment.key);
+  };
+  return showReplyFormButton;
 }

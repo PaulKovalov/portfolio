@@ -9,6 +9,8 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -78,7 +80,7 @@ public class CommentsHandler {
     Map<String, CommentRepresentationSerializer> commentsMap = new HashMap<>();
     // save each comment to the map
     comments.forEach(
-        comment -> commentsMap.put(comment.key, new CommentRepresentationSerializer(comment)));
+      comment -> commentsMap.put(comment.key, new CommentRepresentationSerializer(comment)));
     // update each comment's parent in case there is one
     for (Comment comment : comments) {
       if (comment.replyTo != null) {
@@ -88,11 +90,46 @@ public class CommentsHandler {
     return gson.toJson(commentsMap.values());
   }
 
-  public void deleteComments() {
-    Query query = new Query("Comment");
-    PreparedQuery results = datastore.prepare(query);
-    for (Entity entity : results.asIterable()) {
-      datastore.delete(entity.getKey());
+  // deletes the comment with the given key
+  // deletes all child comments
+  public void deleteComment(String key) throws RequestForbiddenException, EntityNotFoundException {
+    // check that user is authenticated and they are an owner of the email
+    UserService userService = UserServiceFactory.getUserService();
+    if (userService.isUserLoggedIn()) {
+      String commentAuthorUsername = (String)(datastore.get(KeyFactory.stringToKey(key)).getProperty("username"));
+      if (commentAuthorUsername != null && commentAuthorUsername.equals(userService.getCurrentUser().getEmail())) {
+        // Technically if there are replies to this comment I can delete the whole comments thread,
+        // I don't know what is better - to delete them all or to change parent comment to dummy one
+        // with "deleted" text Here I am implementing the first one
+        Map<Key, Entity> commentsMap = new HashMap<>();
+        Query query = new Query("Comment");
+        PreparedQuery results = datastore.prepare(query);
+        for (Entity entity : results.asIterable()) {
+          commentsMap.put(entity.getKey(), entity);
+        }
+        deleteThread(KeyFactory.stringToKey(key), commentsMap);
+      } else {
+        throw new RequestForbiddenException("You are not owner of the comment");
+      }
+    } else {
+      throw new RequestForbiddenException("Not authenticated");
+    }
+  }
+
+  // deletes current comment and recursively calls itself to delete all
+  // child comments
+  private void deleteThread(Key current, Map<Key, Entity> commentsMap) {
+    datastore.delete(current);
+    // this can be done faster, presumably in O(thread length) if I store reversed reply keys in the
+    // datastore, then I will only need to run the DFS over the thread. I'm doing this slow version
+    // which runs in O(N* thread length) because it is faster to implement, better approach needs
+    // way more time
+    for (Entry<Key, Entity> entry : commentsMap.entrySet()) {
+      Object replyToValue = entry.getValue().getProperty("replyTo");
+      if (replyToValue != null && replyToValue.equals(KeyFactory.keyToString(current))) {
+        // this comment is a child of current, call delete for it
+        deleteThread(entry.getKey(), commentsMap);
+      }
     }
   }
 }
