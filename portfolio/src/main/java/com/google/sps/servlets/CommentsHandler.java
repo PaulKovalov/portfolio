@@ -21,7 +21,9 @@ import java.util.Map.Entry;
 public class CommentsHandler {
   private DatastoreService datastore;
 
-  public CommentsHandler() { datastore = DatastoreServiceFactory.getDatastoreService(); };
+  public CommentsHandler() {
+    datastore = DatastoreServiceFactory.getDatastoreService();
+  };
 
   public String saveComment(Comment comment) throws BadRequestException {
     Entity commentEntity = new Entity("Comment");
@@ -77,7 +79,8 @@ public class CommentsHandler {
     // use map to build a list of replies for each comment
     Map<String, CommentRepresentationSerializer> commentsMap = new HashMap<>();
     // save each comment to the map
-    comments.forEach(comment -> commentsMap.put(comment.key, new CommentRepresentationSerializer(comment)));
+    comments.forEach(
+      comment -> commentsMap.put(comment.key, new CommentRepresentationSerializer(comment)));
     // update each comment's parent in case there is one
     for (Comment comment : comments) {
       if (comment.replyTo != null) {
