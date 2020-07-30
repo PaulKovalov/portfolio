@@ -42,7 +42,7 @@ public class AuthenticationServlet extends HttpServlet {
       // construct a json objects
       jsonObject.addProperty("authenticated", true);
       jsonObject.addProperty("logoutUrl", logoutUrl);
-      jsonObject.addProperty("email", userEmail);
+      jsonObject.addProperty("username", userEmail);
     } else {
       String urlToRedirectToAfterUserLogsIn = "/";
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
