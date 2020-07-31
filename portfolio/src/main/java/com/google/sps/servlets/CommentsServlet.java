@@ -27,15 +27,18 @@ import com.google.appengine.api.users.UserServiceFactory;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 @WebServlet("/comments")
 public class CommentsServlet extends HttpServlet {
   private final int BAD_REQUEST = 400;
+  private final String BLOBKEY_REQUEST_ATTRIBUTE = "com.google.appengine.api.blobstore.upload.blobkeys";
   /**
    * Returns the list of all comments
    */
@@ -54,20 +57,21 @@ public class CommentsServlet extends HttpServlet {
     // get URL parameters from the request
     String text = request.getParameter("text");
     String replyTo = request.getParameter("replyTo"); // this one is optional
-    String uploadedFileUrl = getUploadedFileUrl(request, "image");
+    String uploadedFileUrl = null;
     // Get currently logged in user from Users API (for now username == email)
     Comment comment = new Comment(getUserNickname(), text);
+    // if user submitted a file, add file url to the comment
+    if (request.getAttribute(BLOBKEY_REQUEST_ATTRIBUTE) != null) {
+      uploadedFileUrl = getUploadedFileUrl(request, "image");
+      comment.imageUrl = uploadedFileUrl;
+    }
     // if comment is a reply, add reply key to the comment
     if (replyTo != null) {
       comment.replyTo = replyTo;
     }
-    // if user submitted a file, add file url to the comment
-    if (uploadedFileUrl != null) {
-      comment.imageUrl = uploadedFileUrl;
-    } 
     CommentsHandler commentsHandler = new CommentsHandler();
     try {
-      // when comment is saved, it is returned as a JSON string 
+      // when comment is saved, it is returned as a JSON string
       String serializedComment = commentsHandler.saveComment(comment);
       // use the response's writer to return the comment
       response.getWriter().println(serializedComment);

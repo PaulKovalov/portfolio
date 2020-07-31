@@ -1,7 +1,3 @@
-.comments {
-  margin-bottom: 50px;
-}
-
 .comment {
   margin-top: 10px;
 }
@@ -14,12 +10,20 @@
   margin: 0px 10px 0px 0px;
 }
 
+.comment input[type="submit"] {
+  margin-left: 10px;
+}
+
 .hidden {
   display: none;
 }
 
 .visible {
   display: block;
+}
+
+.comments {
+  margin-bottom: 50px;
 }
 
 .comments button {
