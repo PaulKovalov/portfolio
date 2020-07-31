@@ -28,6 +28,20 @@
   margin-right: 10px;
 }
 
+.comments input[type="text"] {
+  padding: 4px;
+  width: 150px;
+}
+
+.comments input[type="submit"] {
+  border: none;
+  border-radius: 3px;
+  font-size: 14px;
+  padding: 6px;
+  cursor: pointer;
+  width: fit-content;
+}
+
 .comment-header {
   display: flex;
   flex-direction: row;
@@ -47,4 +61,11 @@
 
 #auth button {
   margin-left: 20px;
+}
+
+#add-comment-form {
+  display: flex;
+  flex-direction: column;
+  height: 90px;
+  justify-content: space-between;
 }

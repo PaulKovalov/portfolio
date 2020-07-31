@@ -50,9 +50,12 @@ function addCommentToDOM(comment, depth, authState) {
   commentDiv.style = 'margin-left: ' + Math.sqrt(Number(depth * 100)) + 'px';
   commentDiv.id = comment.key;
   const commentText = document.createElement('p');
-  commentText.innerText = comment.text; 
+  commentText.innerText = comment.text;
   // append everything to the comment div
   commentDiv.appendChild(getCommentHeader(comment));
+  if (comment.imageUrl) {
+    commentDiv.appendChild(getCommentImage(comment));
+  }
   commentDiv.appendChild(commentText);
   if (authState.authenticated === true) {
     // if the user is authenticated then allow replies
@@ -161,13 +164,20 @@ function addActionButtonsBasedOnAuthState(authState) {
 
 // creates form for adding new comments
 function createNewCommentForm() {
-  const formElement = document.createElement('form');
-  formElement.method = 'POST';
-  formElement.action = '/comments';
-  formElement.id = 'add-comment-form';
-  formElement.appendChild(createFormInput('text', 'text', 'Write your comment here'));
-  formElement.appendChild(createFormInput('submit', '', ''));
-  document.getElementById('form-add-comment-div').appendChild(formElement);
+  fetch('/blobstore-upload-url').then(response => {
+    return response.json();
+  }).then(data => {
+    // server returns the action url for the form
+    const formElement = document.createElement('form');
+    formElement.method = 'POST';
+    formElement.action = data.url;
+    formElement.id = 'add-comment-form';
+    formElement.enctype = 'multipart/form-data';
+    formElement.appendChild(createFormInput('text', 'text', 'Write your comment here'));
+    formElement.appendChild(createFormInput('file', 'image', ''));
+    formElement.appendChild(createFormInput('submit', '', ''));
+    document.getElementById('form-add-comment-div').appendChild(formElement);
+  }); 
 }
 
 // creates tag 'No comments yet' and adds it to DOM
@@ -183,7 +193,7 @@ function createLinkButton(text, link) {
   button.innerText = text;
   button.onclick = function() {
     window.location.href = link;
-  }
+  };
   return button;
 }
 
@@ -192,14 +202,17 @@ function createDeleteButton(comment) {
   const deleteButton = document.createElement('button');
   deleteButton.innerText = 'Delete';
   deleteButton.onclick = function() {
-    const request = new Request('/delete-data?commentKey='+comment.key, {method : 'POST',});
+    const request = new Request('/delete-data?commentKey=' + comment.key, {
+      method : 'POST',
+    });
     fetch(request).then(() => {
       window.location.reload(false);
     })
-  }
+  };
   return deleteButton;
 }
 
+// creates a button that toggles reply form visibility
 function createShowReplyFormButton(comment) {
   const showReplyFormButton = document.createElement('button');
   showReplyFormButton.innerText = 'Reply';
@@ -209,4 +222,12 @@ function createShowReplyFormButton(comment) {
     toggleReplyField(comment.key);
   };
   return showReplyFormButton;
+}
+
+// construct an img dom element and adds comment's imageUrl src property to the tag
+function getCommentImage(comment) {
+  const imgElement = document.createElement('img');
+  imgElement.src = comment.imageUrl;
+  imgElement.alt = 'Image attached to the comment';
+  return imgElement;
 }

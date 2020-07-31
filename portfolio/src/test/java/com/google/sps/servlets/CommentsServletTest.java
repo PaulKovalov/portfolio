@@ -11,6 +11,7 @@ import com.google.appengine.repackaged.com.google.gson.JsonArray;
 import com.google.appengine.repackaged.com.google.gson.JsonElement;
 import com.google.appengine.repackaged.com.google.gson.JsonObject;
 import com.google.appengine.repackaged.com.google.gson.JsonParser;
+import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -28,7 +29,7 @@ class CommentsServletTest {
   private MockHttpServletRequest request;
   private MockHttpServletResponse response;
   private final LocalServiceTestHelper helper =
-      new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig(), new LocalUserServiceTestConfig());
+      new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig(), new LocalUserServiceTestConfig(), new LocalBlobstoreServiceTestConfig());
   private String testEmail = "test@example.com";
   // helper method that quotes the string
   public String quoted(String unquoted) {
