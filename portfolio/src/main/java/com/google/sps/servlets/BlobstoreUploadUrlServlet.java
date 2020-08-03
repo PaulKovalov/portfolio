@@ -32,7 +32,8 @@ public class BlobstoreUploadUrlServlet extends HttpServlet {
     if (userService.isUserLoggedIn()) {
       // generate a upload link
       BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-      String uploadUrl = blobstoreService.createUploadUrl("/my-form-handler");
+      // redirect to "comments" after uploading the file
+      String uploadUrl = blobstoreService.createUploadUrl("/comments");
       // create a json object from the link
       JsonObject jsonObject = new JsonObject();
       jsonObject.addProperty("url", uploadUrl);

@@ -9,7 +9,7 @@ public class Comment {
   public String replyTo;
   public String key;
   public String timestamp;
-
+  public String imageUrl;
   public Comment(String username, String text) {
     this.username = username;
     this.text = text;
@@ -24,5 +24,6 @@ public class Comment {
     this.replyTo = other.replyTo;
     this.key = other.key;
     this.timestamp = other.timestamp;
+    this.imageUrl = other.imageUrl;
   }
 }
