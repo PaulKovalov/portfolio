@@ -53,10 +53,11 @@ function addCommentToDOM(comment, depth, authState) {
   commentText.innerText = comment.text;
   // append everything to the comment div
   commentDiv.appendChild(getCommentHeader(comment));
+  commentDiv.appendChild(commentText);
   if (comment.imageUrl) {
     commentDiv.appendChild(getCommentImage(comment));
+    commentDiv.appendChild(document.createElement('br'));
   }
-  commentDiv.appendChild(commentText);
   if (authState.authenticated === true) {
     // if the user is authenticated then allow replies
     commentDiv.appendChild(getCommentReplyForm(comment));
@@ -177,7 +178,7 @@ function createNewCommentForm() {
     formElement.appendChild(createFormInput('file', 'image', ''));
     formElement.appendChild(createFormInput('submit', '', ''));
     document.getElementById('form-add-comment-div').appendChild(formElement);
-  }); 
+  });
 }
 
 // creates tag 'No comments yet' and adds it to DOM

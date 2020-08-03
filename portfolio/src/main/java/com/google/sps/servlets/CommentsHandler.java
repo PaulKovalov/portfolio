@@ -14,9 +14,11 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class CommentsHandler {
   private DatastoreService datastore;
@@ -58,7 +60,7 @@ public class CommentsHandler {
 
   public String getComments() {
     Gson gson = new Gson();
-    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    Query query = new Query("Comment");
     PreparedQuery results = datastore.prepare(query);
     ArrayList<Comment> comments = new ArrayList<>();
     for (Entity entity : results.asIterable()) {
@@ -87,7 +89,10 @@ public class CommentsHandler {
         commentsMap.get(comment.replyTo).replies.add(comment.key);
       }
     }
-    return gson.toJson(commentsMap.values());
+    // order map keys
+    ArrayList<CommentRepresentationSerializer> commentsList = new ArrayList<>(commentsMap.values());
+    commentsList.sort((c1, c2) -> c2.timestamp.compareTo(c1.timestamp));
+    return gson.toJson(commentsList);
   }
 
   // deletes the comment with the given key
