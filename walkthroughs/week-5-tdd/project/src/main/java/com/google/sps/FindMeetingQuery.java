@@ -19,7 +19,7 @@ import java.util.Collection;
 
 public final class FindMeetingQuery {
   // returns a list of time ranges appropriate for the request
-  // time complexity is O(G * (E log E)) where:
+  // time complexity is O(G * E) where:
   // -- G is a number of people who need to attend the event
   // -- E is a number of events in total where anyone of set G may participate
   // space complexity is O(max(E, G))
