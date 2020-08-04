@@ -79,13 +79,8 @@ public final class FindMeetingQuery {
 
     // when all events are merged, find appropriate intervals
     // handle corner case
-    Interval first = takenIntervals.get(0);
-    if (first.start != 0) {
-      if (first.start >= request.getDuration()) {
-        // add interval to answer if its duration is big enough
-        answer.add(TimeRange.fromStartEnd(0, first.start, false));
-      }
-    }
+    takenIntervals.add(0, new Interval(0, 0));
+    takenIntervals.add(takenIntervals.size(), new Interval(1440, 1440));
     // general case
     for (int i  = 0; i < takenIntervals.size() - 1; ++i) {
       Interval cur = takenIntervals.get(i);
@@ -94,14 +89,6 @@ public final class FindMeetingQuery {
       if (duration >= request.getDuration()) {
         // add interval to answer if its duration is big enough
         answer.add(TimeRange.fromStartEnd(cur.end, next.start, false));
-      }
-    }
-    // another corner case when there is may be a gap between the end of the day and the last interval
-    Interval last = takenIntervals.get(takenIntervals.size() - 1);
-    if (last.end != 1440) {
-      // add only if enough duration
-      if (1440 - last.end >= request.getDuration()) {
-        answer.add(TimeRange.fromStartEnd(last.end, 1440, false));
       }
     }
     return answer;
