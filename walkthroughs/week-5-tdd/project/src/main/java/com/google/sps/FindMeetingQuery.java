@@ -32,8 +32,6 @@ public final class FindMeetingQuery {
     // I guess the algorithm is the following:
     // merge answer with the optional events, and if new answer is not empty, return new answer
     // otherwise ignore optional attendees
-    ArrayList<String> attendees = new ArrayList<>(request.getAttendees());
-    ArrayList<String> optionalAttendees = new ArrayList<>(request.getOptionalAttendees());
     ArrayList<Event> relevantEvents = new ArrayList<>();
     // the list of events of optional employees'
     ArrayList<Event> optionalEvents = new ArrayList<>();
@@ -44,7 +42,7 @@ public final class FindMeetingQuery {
     }
 
     // get the list of events for required attendees
-    for (String p : attendees) {
+    for (String p : request.getAttendees()) {
       for (Event e : events) {
         // if event includes the person
         if (e.getAttendees().contains(p)) {
@@ -54,7 +52,7 @@ public final class FindMeetingQuery {
     }
 
     // get the list of events for optional attendees
-    for (String p : optionalAttendees) {
+    for (String p : request.getOptionalAttendees()) {
       for (Event e : events) {
         // if event includes the person
         if (e.getAttendees().contains(p)) {
