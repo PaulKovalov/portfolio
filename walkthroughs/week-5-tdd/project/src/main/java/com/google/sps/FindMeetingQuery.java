@@ -17,14 +17,19 @@ package com.google.sps;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 public final class FindMeetingQuery {
   // returns a list of time ranges appropriate for the request
-  // time complexity is O(max(Attendee * Events, OptionalAttendee * OptionalEvents) + OptionalEvents * Events) where:
+  // time complexity is O(max(Attendee * Events * log Events, OptionalAttendee * OptionalEvents * log OptionalEvents)
+  //                       + (TotalEvents log TotalEvents) where:
   // -- Attendee is a number of people who MUST attend the event
   // -- OptionalAttendee is a number of people who can attend the event
   // -- Events is a number of events in total where anyone from set of Attendee may participate
-  // -- OptionalEvents is a number of events in total where anyone from set of OptionAttendee MUST participate 
+  // -- OptionalEvents is a number of events in total where anyone from set of OptionAttendee MUST participate
+  // -- TotalEvents is a number events in total where people from request must participate
   // space complexity is O(E)
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     // similar to merge intervals problem. My idea is to merge all request's attendees' events
@@ -33,9 +38,19 @@ public final class FindMeetingQuery {
     // I guess the algorithm is the following:
     // merge answer with the optional events, and if new answer is not empty, return new answer
     // otherwise ignore optional attendees
-    ArrayList<Event> relevantEvents = new ArrayList<>();
-    // the list of events of optional employees'
-    ArrayList<Event> optionalEvents = new ArrayList<>();
+
+    // comparator for event sorting
+    Comparator<Event> eventComparator = (Event e1, Event e2) -> {
+      TimeRange e1when = e1.getWhen();
+      TimeRange e2when = e2.getWhen();
+      if (e1when.start() == e2when.start()) {
+        return e1when.end() - e2when.end();
+      }
+      return e1when.start() - e2when.start();
+    };
+
+    // provides sorting
+    TreeSet<Event> requiredEvents = new TreeSet<>(eventComparator);
 
     // check if request for a valid duration
     if (request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
@@ -47,45 +62,27 @@ public final class FindMeetingQuery {
       for (Event e : events) {
         // if event includes the person
         if (e.getAttendees().contains(p)) {
-          relevantEvents.add(e);
+          requiredEvents.add(e);
         }
       }
     }
 
+    // now merge required events
+    ArrayList<TimeRange> answer = getFreeTimeRanges(getTakenIntervals(requiredEvents), request.getDuration());
+
+    // merge optional events to required events
     // get the list of events for optional attendees
     for (String p : request.getOptionalAttendees()) {
       for (Event e : events) {
         // if event includes the person
         if (e.getAttendees().contains(p)) {
-          optionalEvents.add(e);
+          requiredEvents.add(e);
         }
       }
     }
 
-    // sort events by start date
-    relevantEvents.sort((e1, e2) -> {
-      TimeRange e1when = e1.getWhen();
-      TimeRange e2when = e2.getWhen();
-      if (e1when.start() == e2when.start()) {
-        return e1when.end() - e2when.end();
-      }
-      return e1when.start() - e2when.start();
-    });    
-    // now merge all events
-    ArrayList<Interval> takenIntervals = getTakenIntervals(relevantEvents);
-    ArrayList<TimeRange> answer = getFreeTimeRanges(takenIntervals, request.getDuration());
-    ArrayList<TimeRange> answerIncludingOptionals = answer;
-    // handle optionals by inserting each of their events to the taken intervals, and if
-    // there are no free gaps remains, return answer
-    for (Event e: optionalEvents) {
-      // check if some free space left that can accomodate the request
-      takenIntervals = insertInterval(takenIntervals, eventToInterval(e));
-      answerIncludingOptionals = getFreeTimeRanges(takenIntervals, request.getDuration());
-      if (answerIncludingOptionals.size() == 0) {
-        return answer;
-      }
-    }
-    return answerIncludingOptionals;
+    ArrayList<TimeRange> answerIncludingOptionals =getFreeTimeRanges(getTakenIntervals(requiredEvents), request.getDuration());
+    return answerIncludingOptionals.size() == 0 ? answer : answerIncludingOptionals;
   }
 
   // converts event to a more convinient Interval object
@@ -94,15 +91,16 @@ public final class FindMeetingQuery {
   }
 
   // returns a list of taken intervals
-  private ArrayList<Interval> getTakenIntervals(ArrayList<Event> relevantEvents) {
+  private ArrayList<Interval> getTakenIntervals(TreeSet<Event> events) {
     ArrayList<Interval> takenIntervals = new ArrayList<>();
-    if (relevantEvents.size() == 0) {
+    if (events.size() == 0) {
       return takenIntervals;
     }
-    takenIntervals.add(eventToInterval(relevantEvents.get(0))); // add the first event to the merged
+    Iterator<Event> iter = events.iterator();
+    takenIntervals.add(eventToInterval(iter.next())); // add the first event to the merged
     // merge remaining events
-    for (int i = 1; i < relevantEvents.size(); ++i) {
-      Interval cur = eventToInterval(relevantEvents.get(i));
+    while (iter.hasNext()) {
+      Interval cur = eventToInterval(iter.next());
       Interval last = takenIntervals.get(takenIntervals.size() - 1);
       // two possible cases - either current event's start is later than last merged event's end, or not
       if (cur.start > last.end) {
@@ -134,27 +132,5 @@ public final class FindMeetingQuery {
       }
     }
     return answer;
-  }
-
-  // inserts the list of intervals to the {@code to} and returns new merged list
-  private ArrayList<Interval> insertInterval(ArrayList<Interval> to, Interval newInterval) {
-    ArrayList<Interval> result = new ArrayList<>();
-    int i = 0;
-    // add all the intervals ending before newInterval starts
-    while (i < to.size() && to.get(i).end < newInterval.start) {
-      result.add(to.get(i++));
-    }
-    // merge all overlapping intervals to one considering newInterval
-    while (i < to.size() && to.get(i).start <= newInterval.end) {
-      newInterval = new Interval( // we could mutate newInterval here also
-          Math.min(newInterval.start, to.get(i).start), Math.max(newInterval.end, to.get(i).end));
-      i++;
-    }
-    result.add(newInterval); // add the union of intervals we got
-    // add all the rest
-    while (i < to.size()) {
-      result.add(to.get(i++));
-    }
-    return result;
   }
 }
