@@ -12,7 +12,7 @@ public class Interval implements Comparable<Interval>{
 
   @Override
   public String toString() {
-    return "Interval [ " + this.start + ", " + this.end + "]";
+    return "Interval [ " + this.start + ", " + this.end + "] ";
   }
 
   @Override
