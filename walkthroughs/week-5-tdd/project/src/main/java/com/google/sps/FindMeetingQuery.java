@@ -17,13 +17,14 @@ package com.google.sps;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 public final class FindMeetingQuery {
   // returns a list of time ranges appropriate for the request
-  // time complexity is O(G * E) where:
-  // -- G is a number of people who need to attend the event
-  // -- E is a number of events in total where anyone of set G may participate
+  // time complexity is O(max(Attendee * Events, OptionalAttendee * OptionalEvents) + OptionalEvents * Events) where:
+  // -- Attendee is a number of people who MUST attend the event
+  // -- OptionalAttendee is a number of people who can attend the event
+  // -- Events is a number of events in total where anyone from set of Attendee may participate
+  // -- OptionalEvents is a number of events in total where anyone from set of OptionAttendee MUST participate 
   // space complexity is O(E)
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     // similar to merge intervals problem. My idea is to merge all request's attendees' events
@@ -75,17 +76,16 @@ public final class FindMeetingQuery {
     ArrayList<TimeRange> answer = getFreeTimeRanges(takenIntervals, request.getDuration());
     ArrayList<TimeRange> answerIncludingOptionals = answer;
     // handle optionals by inserting each of their events to the taken intervals, and if
-    // there are no free gaps remains, return noOptionalAnswer
+    // there are no free gaps remains, return answer
     for (Event e: optionalEvents) {
       // check if some free space left that can accomodate the request
       takenIntervals = insertInterval(takenIntervals, eventToInterval(e));
       answerIncludingOptionals = getFreeTimeRanges(takenIntervals, request.getDuration());
+      if (answerIncludingOptionals.size() == 0) {
+        return answer;
+      }
     }
-    if (answerIncludingOptionals.size() == 0) {
-      return answer;
-    } else {
-      return answerIncludingOptionals;
-    }
+    return answerIncludingOptionals;
   }
 
   // converts event to a more convinient Interval object
@@ -119,10 +119,6 @@ public final class FindMeetingQuery {
   // returns a list of free time gaps based on taken intervals
   private ArrayList<TimeRange> getFreeTimeRanges(ArrayList<Interval> takenIntervals, long requestedDuration) {
     ArrayList<TimeRange> answer = new ArrayList<>();
-    if (takenIntervals.size() == 0) {
-      answer.add(TimeRange.WHOLE_DAY);
-      return answer;
-    }
     // when all events are merged, find appropriate intervals
     // handle corner case
     takenIntervals.add(0, new Interval(0, 0));
