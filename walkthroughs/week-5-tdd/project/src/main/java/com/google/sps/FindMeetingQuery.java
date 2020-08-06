@@ -73,19 +73,20 @@ public final class FindMeetingQuery {
     ArrayList<Interval> takenIntervalsRequired = getTakenIntervals(requiredEvents);
     ArrayList<TimeRange> answer = getFreeTimeRanges(takenIntervalsRequired, request.getDuration());
 
-    // add optional events to required events
-    // get the list of events for optional attendees
+    // get the list of optional events
+    ArrayList<Event> optionalEvents = new ArrayList<>();
     for (String p : request.getOptionalAttendees()) {
       for (Event e : events) {
         // if event includes the person
         if (e.getAttendees().contains(p)) {
-          requiredEvents.add(e);
+          optionalEvents.add(e);
         }
       }
     }
-    // sort again
-    requiredEvents.sort(eventComparator);
-    ArrayList<Interval> takenIntervalsOptional = mergeTwoEventsLists(getTakenIntervals(requiredEvents), takenIntervalsRequired);
+    // sort optional events
+    optionalEvents.sort(eventComparator);
+
+    ArrayList<Interval> takenIntervalsOptional = mergeTwoEventsLists(getTakenIntervals(optionalEvents), takenIntervalsRequired);
     ArrayList<TimeRange> answerIncludingOptionals = getFreeTimeRanges(takenIntervalsOptional, request.getDuration());
     return answerIncludingOptionals.size() == 0 ? answer : answerIncludingOptionals;
   }
