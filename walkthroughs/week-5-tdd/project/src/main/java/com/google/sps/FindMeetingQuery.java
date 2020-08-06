@@ -19,6 +19,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class FindMeetingQuery {
   // returns a list of time ranges appropriate for the request
@@ -48,24 +51,18 @@ public final class FindMeetingQuery {
       return e1when.start() - e2when.start();
     };
 
-    // provides sorting
-    ArrayList<Event> requiredEvents = new ArrayList<>();
-
     // check if request for a valid duration
     if (request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
       return Arrays.asList();
     }
 
+    ArrayList<Event> requiredEvents = new ArrayList<>();
+    ArrayList<Event> optionalEvents = new ArrayList<>();
+
     // get the list of events for required attendees
     for (String p : request.getAttendees()) {
-      for (Event e : events) {
-        // if event includes the person
-        if (e.getAttendees().contains(p)) {
-          requiredEvents.add(e);
-        }
-      }
+      requiredEvents.addAll(events.stream().filter(e -> e.getAttendees().contains(p)).collect(Collectors.toList()));
     }
-
     // sort required events
     requiredEvents.sort(eventComparator);
 
@@ -74,19 +71,14 @@ public final class FindMeetingQuery {
     ArrayList<TimeRange> answer = getFreeTimeRanges(takenIntervalsRequired, request.getDuration());
 
     // get the list of optional events
-    ArrayList<Event> optionalEvents = new ArrayList<>();
     for (String p : request.getOptionalAttendees()) {
-      for (Event e : events) {
-        // if event includes the person
-        if (e.getAttendees().contains(p)) {
-          optionalEvents.add(e);
-        }
-      }
+      optionalEvents.addAll(events.stream().filter(e -> e.getAttendees().contains(p)).collect(Collectors.toList()));
     }
     // sort optional events
     optionalEvents.sort(eventComparator);
 
-    ArrayList<Interval> takenIntervalsOptional = mergeTwoEventsLists(getTakenIntervals(optionalEvents), takenIntervalsRequired);
+    ArrayList<Interval> takenIntervalsOptional =
+        mergeTwoEventsLists(getTakenIntervals(optionalEvents), takenIntervalsRequired);
     ArrayList<TimeRange> answerIncludingOptionals = getFreeTimeRanges(takenIntervalsOptional, request.getDuration());
     return answerIncludingOptionals.size() == 0 ? answer : answerIncludingOptionals;
   }
@@ -164,34 +156,27 @@ public final class FindMeetingQuery {
         }
       }
     }
+    // if something left in the list, merge it
+    l1.stream().skip(i).forEach(interval -> {
+      if (!answer.isEmpty() && intersects(answer.get(answer.size() - 1), interval)) {
+        answer.get(answer.size() - 1).start = Math.min(answer.get(answer.size() - 1).start, interval.start);
+        answer.get(answer.size() - 1).end = Math.max(answer.get(answer.size() - 1).end, interval.end);
+      } else {
+        // otherwise append the item to answer
+        answer.add(interval);
+      }
+    });
 
-    // at least one of the iterators is empty at this moment
-    // if something left in one list, merge it
-    while (i < l1.size()) {
-      // pick the last interval
-      Interval interval1 = l1.get(i++);
-      // if it intersects with the last item in the answer, update the last item in the answer
-      if (!answer.isEmpty() && intersects(answer.get(answer.size() - 1), interval1)) {
-        answer.get(answer.size() - 1).start = Math.min(answer.get(answer.size() - 1).start, interval1.start);
-        answer.get(answer.size() - 1).end = Math.max(answer.get(answer.size() - 1).end, interval1.end);
-      } else {
-        // otherwise append the item to answer
-        answer.add(interval1);
-      }
-    }
     // if something left in the second list, merge it
-    while (j < l2.size()) {
-      // pick the last interval
-      Interval interval2 = l2.get(j++);
-      // if it intersects with the last item in the answer, update the last item in the answer
-      if (!answer.isEmpty() && intersects(answer.get(answer.size() - 1), interval2)) {
-        answer.get(answer.size() - 1).start = Math.min(answer.get(answer.size() - 1).start, interval2.start);
-        answer.get(answer.size() - 1).end = Math.max(answer.get(answer.size() - 1).end, interval2.end);
+    l2.stream().skip(j).forEach(interval -> {
+      if (!answer.isEmpty() && intersects(answer.get(answer.size() - 1), interval)) {
+        answer.get(answer.size() - 1).start = Math.min(answer.get(answer.size() - 1).start, interval.start);
+        answer.get(answer.size() - 1).end = Math.max(answer.get(answer.size() - 1).end, interval.end);
       } else {
         // otherwise append the item to answer
-        answer.add(interval2);
+        answer.add(interval);
       }
-    }
+    });
     return answer;
   }
   // checks if intervals intersect in O(1)
